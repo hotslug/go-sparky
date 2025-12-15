@@ -1,0 +1,8 @@
+./app.go
+./config.go
+./eslint.go
+./husky.go
+./mantine.go
+./prettier.go
+./reactquery.go
+./tailwind.go
