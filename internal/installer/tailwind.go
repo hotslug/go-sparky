@@ -10,7 +10,7 @@ import (
 // InstallTailwind installs Tailwind dependencies and writes related configs.
 func InstallTailwind() error {
 	logger.Step("Installing Tailwind")
-	if err := runner.Run("pnpm", "install", "-D", "tailwindcss@latest", "@tailwindcss/vite@latest"); err != nil {
+	if err := runner.Run("pnpm", "install", "-D", "tailwindcss@latest", "@tailwindcss/vite@latest", "@tailwindcss/postcss@latest"); err != nil {
 		return err
 	}
 

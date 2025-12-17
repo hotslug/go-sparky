@@ -2,35 +2,47 @@ package templates
 
 // EslintConfig returns the eslint.config.js template.
 func EslintConfig() string {
-	return `import js from '@eslint/js';
-import parser from '@typescript-eslint/parser';
-import reactDom from 'eslint-plugin-react-dom';
-import reactX from 'eslint-plugin-react-x';
+	return `import pluginReact from "eslint-plugin-react";
+import pluginReactHooks from "eslint-plugin-react-hooks";
+import tseslint from "typescript-eslint";
+import globals from "globals";
+import js from "@eslint/js";
 
-export default [
+export default tseslint.config(
   {
-    ignores: ['dist'],
+    ignores: ["dist", "node_modules", "eslint.config.ts"],
   },
   js.configs.recommended,
+  ...tseslint.configs.recommended,
   {
-    files: ['**/*.{ts,tsx,js,jsx}'],
+    files: ["**/*.{ts,tsx}"],
+    plugins: {
+      react: pluginReact,
+      "react-hooks": pluginReactHooks,
+    },
     languageOptions: {
-      parser,
+      globals: {
+        ...globals.browser,
+        ...globals.es2020,
+      },
       parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-        project: ['./tsconfig.json'],
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
     },
-    plugins: {
-      'react-x': reactX,
-      'react-dom': reactDom,
-    },
     rules: {
-      ...reactX.configs['recommended-typescript'].rules,
-      ...reactDom.configs.recommended.rules,
+      ...pluginReact.configs.recommended.rules,
+      ...pluginReactHooks.configs.recommended.rules,
+      "react/react-in-jsx-scope": "off",
+      "react-hooks/exhaustive-deps": "off",
+    },
+    settings: {
+      react: {
+        version: "detect",
+      },
     },
   },
-];
+);
 `
 }

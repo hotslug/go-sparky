@@ -3,6 +3,7 @@ package templates
 // PrettierConfig returns the .prettierrc template.
 func PrettierConfig() string {
 	return `{
+  "tabWidth": 2,
   "singleQuote": true,
   "semi": false,
   "plugins": [

@@ -25,11 +25,18 @@ Flags:
 - `--prettier` – install Prettier with Vite-friendly defaults
 - `--husky` – set up Husky + lint-staged
 - `--styled` – use the styled Mantine landing page template (requires `--mantine`)
+- `--docker` – add Dockerfile + docker-compose.yml (dev + prod)
+- `--vercel` – add `vercel.json` for static deploys
+- `--netlify` – add `netlify.toml` with SPA redirect
 
 After scaffolding:
 - `cd my-app`
 - `pnpm dev`
 - edit `src/App.tsx` to start building ⚡
+
+Docker quickstart:
+- `docker compose up dev` for hot-reload dev server on `localhost:5173`
+- `docker compose up prod` to build & serve the production bundle at `localhost:4173`
 
 ## Development
 - Run tests: `go test ./...`

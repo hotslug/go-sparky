@@ -10,4 +10,7 @@ type Plan struct {
 	Prettier   bool
 	Husky      bool
 	StyledApp  bool
+	Docker     bool
+	Vercel     bool
+	Netlify    bool
 }

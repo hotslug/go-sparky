@@ -11,6 +11,17 @@ import (
 
 // InstallHusky installs Husky, initializes hooks, and writes lint-staged config.
 func InstallHusky() error {
+	if _, err := os.Stat(".git"); err != nil {
+		if os.IsNotExist(err) {
+			logger.Step("Initializing git repository for Husky")
+			if err := runner.Run("git", "init"); err != nil {
+				return err
+			}
+		} else {
+			return err
+		}
+	}
+
 	logger.Step("Installing Husky and lint-staged")
 	if err := runner.Run("pnpm", "install", "-D", "husky@latest", "lint-staged@latest"); err != nil {
 		return err

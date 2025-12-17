@@ -1,8 +1,13 @@
 package logger
 
-import (
-	"fmt"
-)
+import "fmt"
+
+var verbose bool
+
+// SetVerbose toggles verbose output helpers (e.g., spinner).
+func SetVerbose(v bool) {
+	verbose = v
+}
 
 // Step prints a human-friendly progress message.
 func Step(msg string) {
