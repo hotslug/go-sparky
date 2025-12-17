@@ -43,4 +43,4 @@ Docker quickstart:
 - The ASCII banner lives at `assets/ascii/sparky.txt`; CLI entrypoint is `cmd/root.go`.
 
 ## License
-MIT © Victor Cintron
+CC0 1.0 Universal
