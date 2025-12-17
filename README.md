@@ -4,7 +4,7 @@ CLI scaffolder for React + Vite + TypeScript that installs an opinionated defaul
 
 ## Prerequisites
 - Go 1.21+ (to build/run the CLI)
-- Node 18+ with `pnpm` on your PATH (used to generate and install the Vite app)
+- Node 20+ with `pnpm` on your PATH (used to generate and install the Vite app)
 
 ## Installation
 - Latest released binary via Go: `go install github.com/hotslug/go-sparky@latest`
