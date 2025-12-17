@@ -1,6 +1,6 @@
 # go-sparky
 
-CLI scaffolder for React + Vite + TypeScript that installs opinionated options (Mantine, Tailwind, TanStack Query, ESLint, Prettier, Husky) and rewrites the starter files with matching templates.
+CLI scaffolder for React + Vite + TypeScript that installs an opinionated default stack (Tailwind, TanStack Query, ESLint, Prettier, Husky, Framer Motion) and rewrites the starter files with matching templates. Mantine and deploy configs are optional.
 
 ## Prerequisites
 - Go 1.21+ (to build/run the CLI)
@@ -11,27 +11,27 @@ CLI scaffolder for React + Vite + TypeScript that installs opinionated options (
 - From source in this repo: `go run . --help` or `go build .` then run `./go-sparky`
 
 ## Usage
-Scaffold a new app into a fresh directory:
+Scaffold a new app into a fresh directory (defaults to Tailwind, React Query, ESLint, Prettier, Husky, Framer Motion):
 
 ```sh
-go-sparky new my-app --mantine --tailwind --react-query --eslint --prettier --husky --styled
+go-sparky new my-app
 ```
 
 Flags:
-- `--mantine` – add Mantine UI and wrap the app in `MantineProvider`
-- `--tailwind` – install Tailwind and write `tailwind.config.ts`/`index.css`
-- `--react-query` – add TanStack Query + devtools and wire providers
-- `--eslint` – install ESLint with React/DOM presets
-- `--prettier` – install Prettier with Vite-friendly defaults
-- `--husky` – set up Husky + lint-staged
+- `--mantine` – add Mantine UI and wrap the app in `MantineProvider` (enables PostCSS preset)
+- `--no-tailwind` – skip Tailwind (default installs)
+- `--no-react-query` – skip TanStack Query (default installs)
+- `--no-eslint` – skip ESLint (default installs)
+- `--no-prettier` – skip Prettier (default installs)
+- `--no-husky` – skip Husky + lint-staged (default installs)
 - `--styled` – use the styled Mantine landing page template (requires `--mantine`)
 - `--docker` – add Dockerfile + docker-compose.yml (dev + prod)
 - `--vercel` – add `vercel.json` for static deploys
 - `--netlify` – add `netlify.toml` with SPA redirect
 
 After scaffolding:
-- `cd my-app`
-- `pnpm dev`
+- dependencies are installed (`pnpm install`)
+- dev server starts automatically (`pnpm dev`)
 - edit `src/App.tsx` to start building ⚡
 
 Docker quickstart:
