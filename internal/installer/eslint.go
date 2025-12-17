@@ -10,15 +10,17 @@ import (
 
 // InstallESLint installs ESLint dependencies and config.
 func InstallESLint() error {
-	logger.Step("Installing ESLint")
-	if err := runner.Run("pnpm", "install", "-D",
+	spin := logger.StartSpinner("Installing ESLint")
+	if err := runner.RunQuiet("pnpm", "install", "-D",
 		"eslint@latest",
 		"eslint-plugin-react-x@latest",
 		"eslint-plugin-react-dom@latest",
 		"@typescript-eslint/parser@latest",
 	); err != nil {
+		spin("Failed to install ESLint")
 		return err
 	}
+	spin("Installed ESLint")
 
 	return os.WriteFile("eslint.config.js", []byte(templates.EslintConfig()), 0o644)
 }

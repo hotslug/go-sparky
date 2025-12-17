@@ -9,10 +9,12 @@ import (
 
 // InstallTailwind installs Tailwind dependencies and writes related configs.
 func InstallTailwind() error {
-	logger.Step("Installing Tailwind")
-	if err := runner.Run("pnpm", "install", "-D", "tailwindcss@latest", "@tailwindcss/vite@latest", "@tailwindcss/postcss@latest"); err != nil {
+	spin := logger.StartSpinner("Installing Tailwind CSS")
+	if err := runner.RunQuiet("pnpm", "install", "-D", "tailwindcss@latest", "@tailwindcss/vite@latest", "@tailwindcss/postcss@latest"); err != nil {
+		spin("Failed to install Tailwind CSS")
 		return err
 	}
+	spin("Installed Tailwind CSS")
 
 	return os.WriteFile("tailwind.config.ts", []byte(tailwindConfig), 0o644)
 }

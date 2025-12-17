@@ -10,6 +10,7 @@ import (
 	"github.com/hotslug/go-sparky/internal/logger"
 	"github.com/hotslug/go-sparky/internal/plan"
 	"github.com/hotslug/go-sparky/internal/runner"
+	"github.com/hotslug/go-sparky/internal/version"
 	"github.com/spf13/cobra"
 )
 
@@ -58,6 +59,10 @@ func newNewCmd() *cobra.Command {
 				return fmt.Errorf("pnpm not found: %w", err)
 			}
 
+			if err := version.CheckNodeVersion(); err != nil {
+				return err
+			}
+
 			if _, err := os.Stat(projectName); err == nil {
 				return fmt.Errorf("project directory %s already exists", projectName)
 			} else if !errors.Is(err, os.ErrNotExist) {
@@ -73,12 +78,14 @@ func newNewCmd() *cobra.Command {
 				return err
 			}
 
-			logger.Step("Scaffolding with Vite (React + TypeScript)")
-			logger.Info("Command: pnpm create vite@latest . -- --template react-ts --no-interactive --install=false --rolldown=false --packageManager pnpm --skipGit")
-			// Forward flags after -- and set CI to keep create-vite non-interactive.
-			if err := runner.RunEnv("pnpm", map[string]string{"CI": "1"}, "create", "vite@latest", ".", "--", "--template", "react-ts", "--no-interactive", "--install=false", "--rolldown=false", "--packageManager", "pnpm", "--skipGit"); err != nil {
+			spin := logger.StartSpinner("Scaffolding with Vite (React + TypeScript)")
+			// Set CI to keep create-vite non-interactive.
+			// Note: pnpm doesn't require an extra `--` separator to forward args to the starter.
+			if err := runner.RunQuietEnv("pnpm", map[string]string{"CI": "1"}, "create", "vite@latest", ".", "--template", "react-ts"); err != nil {
+				spin("Failed to scaffold project")
 				return err
 			}
+			spin("Scaffolded Vite project")
 
 			if err := installer.InstallViteReactPlugin(); err != nil {
 				return err
@@ -124,7 +131,7 @@ func newNewCmd() *cobra.Command {
 				}
 			}
 
-			spin := logger.StartSpinner("Finalizing templates")
+			spin = logger.StartSpinner("Finalizing templates")
 			if err := installer.WriteViteConfig(p.Tailwind); err != nil {
 				spin("Failed to finalize templates")
 				return err
@@ -161,17 +168,19 @@ func newNewCmd() *cobra.Command {
 				}
 			}
 
-			logger.Step("Installing dependencies")
-			if err := runner.Run("pnpm", "install"); err != nil {
+			spin = logger.StartSpinner("Installing dependencies")
+			if err := runner.RunQuiet("pnpm", "install"); err != nil {
+				spin("Failed to install dependencies")
 				return err
 			}
+			spin("Installed dependencies")
 
-			logger.Info("Starting dev server with pnpm dev (press Ctrl+C to stop)")
+			logger.Info("\n✨ Sparky is ready!\n\n→ cd " + projectName + "\n→ pnpm dev\n\nEdit src/App.tsx to begin ⚡")
+
+			logger.Info("\nStarting dev server (press Ctrl+C to stop)...")
 			if err := runner.Run("pnpm", "dev"); err != nil {
 				return err
 			}
-
-			logger.Info("✨ Sparky is ready!\n\n→ cd " + projectName + "\n→ pnpm dev\n\nEdit src/App.tsx to begin ⚡")
 			return nil
 		},
 	}

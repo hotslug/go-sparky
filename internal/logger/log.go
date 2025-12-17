@@ -26,5 +26,10 @@ func Success(msg string) {
 
 // Error prints an error message.
 func Error(msg string) {
-	fmt.Printf("✖️ %s\n", msg)
+	fmt.Printf("✖️  %s\n", msg)
+}
+
+// Warning prints a warning message.
+func Warning(msg string) {
+	fmt.Printf("⚠️  %s\n", msg)
 }

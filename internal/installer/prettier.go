@@ -10,14 +10,16 @@ import (
 
 // InstallPrettier installs Prettier and writes the config file.
 func InstallPrettier() error {
-	logger.Step("Installing Prettier")
-	if err := runner.Run("pnpm", "install", "-D",
+	spin := logger.StartSpinner("Installing Prettier")
+	if err := runner.RunQuiet("pnpm", "install", "-D",
 		"prettier@latest",
 		"prettier-plugin-tailwindcss@latest",
 		"@ianvs/prettier-plugin-sort-imports@latest",
 	); err != nil {
+		spin("Failed to install Prettier")
 		return err
 	}
+	spin("Installed Prettier")
 
 	return os.WriteFile(".prettierrc", []byte(templates.PrettierConfig()), 0o644)
 }

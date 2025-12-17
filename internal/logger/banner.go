@@ -1,19 +1,19 @@
 package logger
 
 import (
+	_ "embed"
 	"fmt"
-	"os"
-	"path/filepath"
 )
+
+//go:embed sparky.txt
+var sparkyBanner string
 
 // PrintBanner renders the ASCII banner to stdout.
 func PrintBanner() {
-	path := filepath.Join("assets", "ascii", "sparky.txt")
-	data, err := os.ReadFile(path)
-	if err != nil {
+	if sparkyBanner == "" {
 		fmt.Println("go-sparky")
 		return
 	}
 
-	fmt.Println(string(data))
+	fmt.Println(sparkyBanner)
 }

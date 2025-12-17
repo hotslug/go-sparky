@@ -7,6 +7,11 @@ import (
 
 // InstallFramerMotion installs Framer Motion dependency.
 func InstallFramerMotion() error {
-	logger.Step("Installing Framer Motion")
-	return runner.Run("pnpm", "install", "framer-motion@latest")
+	spin := logger.StartSpinner("Installing Framer Motion")
+	if err := runner.RunQuiet("pnpm", "install", "framer-motion@latest"); err != nil {
+		spin("Failed to install Framer Motion")
+		return err
+	}
+	spin("Installed Framer Motion")
+	return nil
 }
