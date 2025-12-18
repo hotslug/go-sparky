@@ -1,9 +1,9 @@
-<table>
+<table style="border:0;border-collapse:collapse;">
   <tr>
-    <td>
+    <td style="border:0;">
       <img src="assets/sparky.png" alt="Go Sparky mascot" width="300" />
     </td>
-    <td>
+    <td style="border:0;">
       <h1>go-sparky</h1>
     </td>
   </tr>
