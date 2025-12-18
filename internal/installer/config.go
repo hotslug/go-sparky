@@ -38,26 +38,21 @@ export default defineConfig({
 
 // WritePostCSSConfig writes postcss.config.cjs with a lightweight Mantine preset.
 func WritePostCSSConfig() error {
-	plugins := "  plugins: [\n    mantinePreset,\n"
-	plugins += "  ],\n"
-
-	content := `const postcss = require('postcss');
-
-const mantinePreset = () => ({
-  postcssPlugin: 'mantine-preset',
-  Once(root) {
-    const rule = postcss.rule({ selector: ':root' });
-    rule.append({ prop: '--mantine-accent', value: '#339af0' });
-    rule.append({ prop: '--mantine-radius', value: '12px' });
-    root.prepend(rule);
+	content := `module.exports = {
+  plugins: {
+    'postcss-preset-mantine': {},
+    'postcss-simple-vars': {
+      variables: {
+        'mantine-breakpoint-xs': '36em',
+        'mantine-breakpoint-sm': '48em',
+        'mantine-breakpoint-md': '62em',
+        'mantine-breakpoint-lg': '75em',
+        'mantine-breakpoint-xl': '88em',
+      },
+    },
   },
-});
-mantinePreset.postcss = true;
-
-module.exports = {
+};
 `
-	content += plugins
-	content += "};\n"
 
 	return os.WriteFile("postcss.config.cjs", []byte(content), 0o644)
 }
