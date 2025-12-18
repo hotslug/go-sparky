@@ -9,7 +9,7 @@ func PrettierConfig() string {
   "trailingComma": "es5",
   "bracketSpacing": true,
   "arrowParens": "avoid",
-  "endOfLine": "lf"
+  "endOfLine": "lf",
   "semi": false,
   "plugins": [
     "prettier-plugin-tailwindcss",
