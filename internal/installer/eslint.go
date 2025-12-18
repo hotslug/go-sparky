@@ -17,6 +17,7 @@ func InstallESLint() error {
 		"@typescript-eslint/parser@latest",
 		"@typescript-eslint/eslint-plugin@latest",
 		"@tanstack/eslint-plugin-query@latest",
+		"eslint-import-resolver-typescript@latest",
 		"eslint-plugin-react@latest",
 		"eslint-plugin-react-hooks@latest",
 		"eslint-plugin-jsx-a11y@latest",
