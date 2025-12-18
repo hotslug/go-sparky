@@ -65,9 +65,7 @@ func (e *NodeVersionError) Error() string {
 	var sb strings.Builder
 
 	sb.WriteString("\n")
-	sb.WriteString("╭─────────────────────────────────────────────────────────────╮\n")
-	sb.WriteString("│  ⚠️  Node.js Version Incompatibility                        │\n")
-	sb.WriteString("╰─────────────────────────────────────────────────────────────╯\n")
+	sb.WriteString("⚠️  \x1b[38;2;255;185;0mNode.js Version Incompatibility\x1b[0m")
 	sb.WriteString("\n")
 	sb.WriteString(fmt.Sprintf("  Current version:  v%d.%d.%d\n", e.Current.Major, e.Current.Minor, e.Current.Patch))
 	sb.WriteString(fmt.Sprintf("  Required:         %s\n", e.Requirement))

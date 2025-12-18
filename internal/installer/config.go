@@ -37,11 +37,8 @@ export default defineConfig({
 }
 
 // WritePostCSSConfig writes postcss.config.cjs with a lightweight Mantine preset.
-func WritePostCSSConfig(includeTailwind bool) error {
+func WritePostCSSConfig() error {
 	plugins := "  plugins: [\n    mantinePreset,\n"
-	if includeTailwind {
-		plugins += "    require('@tailwindcss/postcss'),\n"
-	}
 	plugins += "  ],\n"
 
 	content := `const mantinePreset = () => ({

@@ -138,7 +138,7 @@ func newNewCmd() *cobra.Command {
 			}
 
 			if p.Mantine {
-				if err := installer.WritePostCSSConfig(p.Tailwind); err != nil {
+				if err := installer.WritePostCSSConfig(); err != nil {
 					spin("Failed to finalize templates")
 					return err
 				}

@@ -59,10 +59,7 @@ body {
 `
 
 const tailwindIndexCSS = `@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   color: #e2e8f0;
