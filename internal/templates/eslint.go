@@ -17,7 +17,14 @@ import configPrettier from "eslint-config-prettier";
 
 export default [
   {
-    ignores: ["dist", "node_modules", "eslint.config.ts"],
+    ignores: [
+      "dist",
+      "node_modules",
+      "eslint.config.ts",
+      "eslint.config.js",
+      "vite.config.ts",
+      "vite.config.js",
+    ],
   },
   js.configs.recommended,
   importPlugin.flatConfigs.recommended,
@@ -56,6 +63,8 @@ export default [
       ...unicorn.configs.recommended.rules,
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
+      "unicorn/filename-case": "off",
+      "unicorn/prefer-node-protocol": "off",
       "import/order": [
         "warn",
         {
