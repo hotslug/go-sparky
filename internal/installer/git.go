@@ -35,5 +35,9 @@ func CreateInitialCommitIfMissing(message string) error {
 		return err
 	}
 
-	return runner.RunQuiet("git", "commit", "-m", message)
+	if err := runner.RunQuiet("git", "commit", "-m", message); err != nil {
+		return fmt.Errorf("Initial git commit failed (check hook output above or rerun with --no-husky): %w", err)
+	}
+
+	return nil
 }
