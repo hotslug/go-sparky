@@ -49,17 +49,95 @@ export default function App() {
 `
 
 const mantineApp = `import '@mantine/core/styles.css';
-import { Button, Container, Stack, Text, Title } from '@mantine/core';
+import { Badge, Box, Button, Container, Group, Image, Stack, Text, Title } from '@mantine/core';
+import sparky from './assets/sparky.png';
 
 export default function App() {
   return (
-    <Container size="sm" py="xl">
-      <Stack gap="md">
-        <Title order={1}>Welcome to your new app ⚡️</Title>
-        <Text>React, TypeScript, and Mantine are ready to go.</Text>
-        <Button>Get Started</Button>
-      </Stack>
-    </Container>
+    <Box
+      style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+        color: '#f8fafc',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <Box
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage:
+            'radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.06) 0px, transparent 120px), radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.14) 0px, transparent 240px)',
+          opacity: 0.6,
+        }}
+      />
+      <Container size="lg" py={80} style={{ position: 'relative', zIndex: 1 }}>
+        <Group align="center" justify="center" gap="xl" wrap="wrap">
+          <Box
+            style={{
+              position: 'relative',
+              padding: '12px',
+              borderRadius: '28px',
+              background:
+                'linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(139, 92, 246, 0.12))',
+            }}
+          >
+            <Image
+              src={sparky}
+              alt="Go Sparky mascot"
+              fit="contain"
+              style={{
+                width: '420px',
+                maxWidth: '100%',
+                borderRadius: '20px',
+              }}
+            />
+          </Box>
+          <Stack gap="xs" style={{ maxWidth: '420px' }}>
+            <Title
+              order={1}
+              className="font-sparky"
+              style={{
+                fontSize: 'clamp(2.5rem, 4vw, 4rem)',
+                letterSpacing: '-0.02em',
+                background: 'linear-gradient(90deg, #60a5fa, #a78bfa)',
+                WebkitBackgroundClip: 'text',
+                color: 'transparent',
+              }}
+            >
+              Go-Sparky
+            </Title>
+            <Text style={{ color: '#cbd5f5', fontSize: '1.2rem' }}>Good boy.</Text>
+            <Badge
+              size="xs"
+              tt="uppercase"
+              style={{
+                backgroundColor: 'rgba(30, 41, 59, 0.7)',
+                color: '#94a3b8',
+                letterSpacing: '0.08em',
+              }}
+            >
+              Vite + React + TypeScript
+            </Badge>
+            <Text style={{ color: '#cbd5f5' }}>
+              Go-Sparky is a CLI scaffolder that spins up a fast, opinionated React stack with
+              TypeScript, Tailwind, and optional add-ons like Mantine, React Query, ESLint,
+              Prettier, and Husky.
+            </Text>
+            <Text style={{ color: '#cbd5f5' }}>It's a great way to get started with a new project.</Text>
+            <Button
+              size="md"
+              radius="md"
+              variant="gradient"
+              gradient={{ from: 'blue', to: 'violet', deg: 90 }}
+            >
+              Get Started
+            </Button>
+          </Stack>
+        </Group>
+      </Container>
+    </Box>
   );
 }
 `

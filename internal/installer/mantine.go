@@ -7,6 +7,11 @@ import (
 
 // InstallMantine installs Mantine dependencies.
 func InstallMantine() error {
-	logger.Step("Installing Mantine")
-	return runner.Run("pnpm", "install", "@mantine/core@latest", "@mantine/hooks@latest")
+	spin := logger.StartSpinner("Installing Mantine")
+	if err := runner.RunQuiet("pnpm", "install", "@mantine/core@latest", "@mantine/hooks@latest"); err != nil {
+		spin("Failed to install Mantine")
+		return err
+	}
+	spin("Installed Mantine")
+	return nil
 }

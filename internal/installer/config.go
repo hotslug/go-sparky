@@ -41,10 +41,15 @@ func WritePostCSSConfig() error {
 	plugins := "  plugins: [\n    mantinePreset,\n"
 	plugins += "  ],\n"
 
-	content := `const mantinePreset = () => ({
+	content := `const postcss = require('postcss');
+
+const mantinePreset = () => ({
   postcssPlugin: 'mantine-preset',
   Once(root) {
-    root.prepend(':root { --mantine-accent: #339af0; --mantine-radius: 12px; }');
+    const rule = postcss.rule({ selector: ':root' });
+    rule.append({ prop: '--mantine-accent', value: '#339af0' });
+    rule.append({ prop: '--mantine-radius', value: '12px' });
+    root.prepend(rule);
   },
 });
 mantinePreset.postcss = true;
