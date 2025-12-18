@@ -64,7 +64,7 @@ func newNewCmd() *cobra.Command {
 			}
 
 			if _, err := os.Stat(projectName); err == nil {
-				return fmt.Errorf("project directory %s already exists", projectName)
+				return fmt.Errorf("Project directory \x1b[38;2;255;185;0m%s\x1b[0m already exists. Please choose a different name.", projectName)
 			} else if !errors.Is(err, os.ErrNotExist) {
 				return err
 			}

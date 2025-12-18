@@ -61,12 +61,47 @@ export default function App() {
 }
 `
 
-const basicApp = `export default function App() {
+const basicApp = `import sparky from './assets/sparky.png';
+
+export default function App() {
   return (
-    <div className="app">
-      <h1>Hello from React + Vite + TypeScript ⚡️</h1>
+    <div className="min-h-screen bg-[#1b120a] text-slate-100">
+      <div className="mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center gap-10 px-6 py-16 md:flex-row md:gap-12">
+        <div className="relative">
+          <div className="absolute -inset-2 rounded-[28px] bg-gradient-to-br from-amber-400/50 via-orange-500/30 to-transparent blur-xl" />
+          <div className="flex flex-row items-center justify-center gap-6 h-full w-full">
+            <img
+              src={sparky}
+              width={288}
+              height={288}
+              alt="Go Sparky mascot"
+              className="relative h-60 w-60 object-cover shadow-2xl sm:h-72 sm:w-72"
+            />
+            <div className="flex flex-col items-start justify-center">
+              <div className="font-sparky text-[4rem] font-semibold tracking-tight text-white sm:text-[8rem]">
+                Go-Sparky
+              </div>
+              <div className="text-[1.5rem] text-white">Good boy.</div>
+              <div className="inline-flex items-center uppercase gap-2 text-[10px] text-gray-800">
+                Vite + React + TypeScript
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-shrink-0 text-start md:text-left" style={{ width: '500px' }}>
+          <p className="mt-0 text-base/7 leading-relaxed text-white">
+            Go-Sparky is a CLI scaffolder that spins up a fast, opinionated
+            React stack with TypeScript, Tailwind, and optional add-ons like
+            Mantine, React Query, ESLint, Prettier, and Husky.
+            <br />
+            <br />
+            It's a great way to get started with a new project.
+          </p>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
 `
 

@@ -18,6 +18,14 @@ func WriteAppFiles(p plan.Plan) error {
 		return err
 	}
 
+	if err := os.MkdirAll(filepath.Join("src", "assets"), 0o755); err != nil {
+		return err
+	}
+
+	if err := os.WriteFile(filepath.Join("src", "assets", "sparky.png"), sparkyImage, 0o644); err != nil {
+		return err
+	}
+
 	css := baseIndexCSS
 	if p.Tailwind {
 		css = tailwindIndexCSS
@@ -26,7 +34,9 @@ func WriteAppFiles(p plan.Plan) error {
 	return os.WriteFile(filepath.Join("src", "index.css"), []byte(css), 0o644)
 }
 
-const baseIndexCSS = `:root {
+const baseIndexCSS = `@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+
+:root {
   font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -42,9 +52,15 @@ body {
 #root {
   min-height: 100vh;
 }
+
+.font-sparky {
+  font-family: 'Fredoka', ui-rounded, system-ui, sans-serif;
+}
 `
 
-const tailwindIndexCSS = `@tailwind base;
+const tailwindIndexCSS = `@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -61,5 +77,9 @@ body {
 
 #root {
   min-height: 100vh;
+}
+
+.font-sparky {
+  font-family: 'Fredoka', ui-rounded, system-ui, sans-serif;
 }
 `

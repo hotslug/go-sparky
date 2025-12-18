@@ -29,6 +29,9 @@ Flags:
 - `--vercel` – add `vercel.json` for static deploys
 - `--netlify` – add `netlify.toml` with SPA redirect
 
+TODO:
+- Add opt-in flags for additional CSS frameworks.
+
 After scaffolding:
 - dependencies are installed (`pnpm install`)
 - dev server starts automatically (`pnpm dev`)

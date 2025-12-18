@@ -11,6 +11,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "go-sparky",
 	Short: "Scaffold a modern React app with Vite",
+	SilenceErrors: true,
 }
 
 var flagVerbose bool
@@ -18,7 +19,7 @@ var flagVerbose bool
 // Execute runs the root command.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "💀 \x1b[35mError:\x1b[0m", err)
 		os.Exit(1)
 	}
 }
