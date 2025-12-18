@@ -175,6 +175,10 @@ func newNewCmd() *cobra.Command {
 			}
 			spin("Installed dependencies")
 
+			if err := installer.CreateInitialCommitIfMissing("chore: scaffold project"); err != nil {
+				return err
+			}
+
 			logger.Info("\n⚡ Go Sparky!\n\n→ cd " + projectName + "\n→ pnpm dev\n\n⚡ Edit src/App.tsx to begin")
 
 			logger.Info("\nStarting dev server (press Ctrl+C to stop)...")
