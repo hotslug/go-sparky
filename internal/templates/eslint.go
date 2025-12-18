@@ -63,6 +63,8 @@ export default [
       ...unicorn.configs.recommended.rules,
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
+      "react/no-unescaped-entities": "off",
+      "import/no-unresolved": "off",
       "unicorn/filename-case": "off",
       "unicorn/prefer-node-protocol": "off",
       "import/order": [
@@ -79,6 +81,12 @@ export default [
     settings: {
       react: {
         version: "detect",
+      },
+      "import/resolver": {
+        typescript: {},
+        node: {
+          extensions: [".js", ".jsx", ".ts", ".tsx"],
+        },
       },
     },
   },
