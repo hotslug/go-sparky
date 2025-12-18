@@ -43,7 +43,6 @@ export default [
       react: reactPlugin,
       "react-hooks": reactHooks,
       "jsx-a11y": jsxA11y,
-      import: importPlugin,
       unicorn,
       prettier,
     },
