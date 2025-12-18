@@ -1,8 +1,8 @@
+<img src="assets/sparky.png" alt="Go Sparky mascot" width="160" />
+
 # go-sparky
 
 CLI scaffolder for React + Vite + TypeScript that installs an opinionated default stack (Tailwind, TanStack Query, ESLint, Prettier, Husky, Framer Motion) and rewrites the starter files with matching templates. Mantine and deploy configs are optional.
-
-![Go Sparky mascot](assets/sparky.png)
 
 ## Prerequisites
 - Go 1.21+ (to build/run the CLI)
