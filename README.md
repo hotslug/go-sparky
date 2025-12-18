@@ -1,6 +1,13 @@
-<img src="assets/sparky.png" alt="Go Sparky mascot" width="300" />
-
-# go-sparky
+<table>
+  <tr>
+    <td>
+      <img src="assets/sparky.png" alt="Go Sparky mascot" width="300" />
+    </td>
+    <td>
+      <h1>go-sparky</h1>
+    </td>
+  </tr>
+</table>
 
 CLI scaffolder for React + Vite + TypeScript that installs an opinionated default stack (Tailwind, TanStack Query, ESLint, Prettier, Husky, Framer Motion) and rewrites the starter files with matching templates. Mantine and deploy configs are optional.
 
