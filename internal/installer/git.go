@@ -1,11 +1,12 @@
 package installer
 
 import (
-	"os"
-	"os/exec"
+    "fmt"
+    "os"
+    "os/exec"
 
-	"github.com/hotslug/go-sparky/internal/logger"
-	"github.com/hotslug/go-sparky/internal/runner"
+    "github.com/hotslug/go-sparky/internal/logger"
+    "github.com/hotslug/go-sparky/internal/runner"
 )
 
 // CreateInitialCommitIfMissing commits the current workspace if no commits exist yet.
