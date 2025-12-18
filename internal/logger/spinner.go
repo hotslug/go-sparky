@@ -22,7 +22,7 @@ func StartSpinner(msg string) func(finalMsg string) {
 			case <-stop:
 				return
 			default:
-				fmt.Printf("\r%s %s", frames[i%len(frames)], msg)
+				fmt.Printf("\r\033[2K%s %s", frames[i%len(frames)], msg)
 				i++
 				time.Sleep(120 * time.Millisecond)
 			}
@@ -31,6 +31,6 @@ func StartSpinner(msg string) func(finalMsg string) {
 
 	return func(finalMsg string) {
 		close(stop)
-		fmt.Printf("\r✓ %s\n", finalMsg)
+		fmt.Printf("\r\033[2K\033[32m✓ %s\033[0m\n", finalMsg)
 	}
 }

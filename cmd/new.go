@@ -175,7 +175,7 @@ func newNewCmd() *cobra.Command {
 			}
 			spin("Installed dependencies")
 
-			logger.Info("\n✨ Sparky is ready!\n\n→ cd " + projectName + "\n→ pnpm dev\n\nEdit src/App.tsx to begin ⚡")
+			logger.Info("\n⚡Go Sparky!\n\n→ cd " + projectName + "\n→ pnpm dev\n\n⚡ Edit src/App.tsx to begin")
 
 			logger.Info("\nStarting dev server (press Ctrl+C to stop)...")
 			if err := runner.Run("pnpm", "dev"); err != nil {
