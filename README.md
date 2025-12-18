@@ -1,4 +1,4 @@
-<img src="assets/sparky.png" alt="Go Sparky mascot" width="160" />
+<img src="assets/sparky.png" alt="Go Sparky mascot" width="300" />
 
 # go-sparky
 
