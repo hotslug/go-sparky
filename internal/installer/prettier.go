@@ -21,5 +21,9 @@ func InstallPrettier() error {
 	}
 	spin("Installed Prettier")
 
-	return os.WriteFile(".prettierrc", []byte(templates.PrettierConfig()), 0o644)
+	if err := os.WriteFile(".prettierrc", []byte(templates.PrettierConfig()), 0o644); err != nil {
+		return err
+	}
+
+	return os.WriteFile(".prettierignore", []byte(templates.PrettierIgnore()), 0o644)
 }

@@ -3,8 +3,13 @@ package templates
 // PrettierConfig returns the .prettierrc template.
 func PrettierConfig() string {
 	return `{
+  "printWidth": 120,
   "tabWidth": 2,
-  "singleQuote": true,
+  "useTabs": false,
+  "trailingComma": "es5",
+  "bracketSpacing": true,
+  "arrowParens": "avoid",
+  "endOfLine": "lf"
   "semi": false,
   "plugins": [
     "prettier-plugin-tailwindcss",
