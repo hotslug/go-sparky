@@ -118,6 +118,7 @@ This runs the official `shadcn-ui` init on top of Tailwind (interactive prompts)
 
 TODO:
 - Add opt-in flags for additional CSS frameworks.
+- Explore a minimal MongoDB-friendly backend starter (optional API scaffold)
 
 After scaffolding:
 - dependencies are installed (`pnpm install`)

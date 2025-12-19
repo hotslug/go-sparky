@@ -254,6 +254,16 @@ func newAddShadcnCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.PrintBanner()
 
+			indexCSS := filepath.Join("src", "index.css")
+			indexExists := true
+			if _, err := os.Stat(indexCSS); err != nil {
+				if os.IsNotExist(err) {
+					indexExists = false
+				} else {
+					return err
+				}
+			}
+
 			if _, err := exec.LookPath("pnpm"); err != nil {
 				return fmt.Errorf("pnpm not found: %w", err)
 			}
@@ -286,6 +296,10 @@ func newAddShadcnCmd() *cobra.Command {
 				return err
 			}
 
+			if !indexExists {
+				logger.Warning("\nshadcn-ui initialized, but src/index.css was not found; ensure your Tailwind entry CSS exists and is wired in your Vite project.")
+			}
+
 			logger.Info("\nshadcn-ui initialized. Add components with `pnpm dlx shadcn-ui@latest add button card input ...`")
 			return nil
 		},
@@ -299,6 +313,16 @@ func newAddBulmaCmd() *cobra.Command {
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.PrintBanner()
+
+			indexCSS := filepath.Join("src", "index.css")
+			indexExists := true
+			if _, err := os.Stat(indexCSS); err != nil {
+				if os.IsNotExist(err) {
+					indexExists = false
+				} else {
+					return err
+				}
+			}
 
 			if _, err := exec.LookPath("pnpm"); err != nil {
 				return fmt.Errorf("pnpm not found: %w", err)
@@ -319,7 +343,11 @@ func newAddBulmaCmd() *cobra.Command {
 				return err
 			}
 
-			indexCSS := filepath.Join("src", "index.css")
+			if !indexExists {
+				logger.Warning("\nBulma installed, but src/index.css was not found; add `@import 'bulma/css/bulma.min.css';` to your global CSS manually.")
+				return nil
+			}
+
 			if err := installer.EnsureBulmaImport(indexCSS); err != nil {
 				logger.Warning("\nBulma installed but could not update " + indexCSS + ": " + err.Error())
 				logger.Info("Add `@import 'bulma/css/bulma.min.css';` to your global CSS (after Tailwind directives if you want Tailwind to win). App.tsx left untouched.")
