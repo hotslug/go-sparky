@@ -33,3 +33,13 @@ func InstallESLint() error {
 
 	return os.WriteFile("eslint.config.js", []byte(templates.EslintConfig()), 0o644)
 }
+
+// WriteESLintStrict rewrites eslint.config.js with the default strict config.
+func WriteESLintStrict() error {
+	return os.WriteFile("eslint.config.js", []byte(templates.EslintConfig()), 0o644)
+}
+
+// WriteESLintRelaxed rewrites eslint.config.js with a looser preset.
+func WriteESLintRelaxed() error {
+	return os.WriteFile("eslint.config.js", []byte(templates.EslintConfigRelaxed()), 0o644)
+}

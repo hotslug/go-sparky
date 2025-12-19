@@ -30,6 +30,7 @@ func init() {
 	}
 
 	rootCmd.PersistentFlags().BoolVarP(&flagVerbose, "verbose", "v", true, "Enable verbose output (spinners, extra logs)")
+	rootCmd.AddCommand(newLintCmd())
 	rootCmd.AddCommand(newAddCmd())
 	rootCmd.AddCommand(newRemoveCmd())
 	rootCmd.AddCommand(newNewCmd())

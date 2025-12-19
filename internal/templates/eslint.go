@@ -94,3 +94,83 @@ export default [
 ];
 `
 }
+
+// EslintConfigRelaxed returns a softer eslint.config.js template (no unicorn, import rules relaxed).
+func EslintConfigRelaxed() string {
+	return `import js from "@eslint/js";
+import globals from "globals";
+import tsParser from "@typescript-eslint/parser";
+import tsPlugin from "@typescript-eslint/eslint-plugin";
+import tanstackQuery from "@tanstack/eslint-plugin-query";
+import reactPlugin from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
+import jsxA11y from "eslint-plugin-jsx-a11y";
+import importPlugin from "eslint-plugin-import";
+import configPrettier from "eslint-config-prettier";
+
+export default [
+  {
+    ignores: [
+      "dist",
+      "node_modules",
+      "eslint.config.ts",
+      "eslint.config.js",
+      "vite.config.ts",
+      "vite.config.js",
+    ],
+  },
+  js.configs.recommended,
+  importPlugin.flatConfigs.recommended,
+  {
+    files: ["**/*.{ts,tsx}"],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.es2020,
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tsPlugin,
+      "@tanstack/query": tanstackQuery,
+      react: reactPlugin,
+      "react-hooks": reactHooks,
+      "jsx-a11y": jsxA11y,
+    },
+    rules: {
+      ...tsPlugin.configs.recommended.rules,
+      ...reactPlugin.configs.recommended.rules,
+      ...reactPlugin.configs["jsx-runtime"].rules,
+      ...reactHooks.configs.recommended.rules,
+      ...jsxA11y.configs.recommended.rules,
+      ...tanstackQuery.configs.recommended.rules,
+      "react/react-in-jsx-scope": "off",
+      "react/prop-types": "off",
+      "react/no-unescaped-entities": "off",
+      "import/no-unresolved": "off",
+      "import/order": "off",
+      "import/newline-after-import": "off",
+    },
+    settings: {
+      react: {
+        version: "detect",
+      },
+      "import/resolver": {
+        typescript: {},
+        node: {
+          extensions: [".js", ".jsx", ".ts", ".tsx"],
+        },
+      },
+    },
+  },
+  configPrettier,
+];
+`
+}

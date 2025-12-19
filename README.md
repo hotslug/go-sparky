@@ -38,7 +38,7 @@ Add Mantine to an existing project (leaves `src/App.tsx` untouched):
 go-sparky add mantine
 ```
 
-This installs Mantine packages, writes `postcss.config.cjs`, and rewires `src/main.tsx` to wrap `MantineProvider` (keeps React Query wiring if its deps are present).
+This installs Mantine packages, writes `postcss.config.cjs`, and rewires `src/main.tsx` to wrap `MantineProvider` (keeps React Query wiring if its deps are present). It does not touch `src/App.tsx`.
 Note: `go-sparky add mantine --styled` is not supported; the styled template is only applied during `go-sparky new --mantine --styled` to avoid overwriting your existing `src/App.tsx`.
 
 Add React Query to an existing project (leaves `src/App.tsx` untouched):
@@ -47,7 +47,7 @@ Add React Query to an existing project (leaves `src/App.tsx` untouched):
 go-sparky add react-query
 ```
 
-This installs TanStack Query packages and rewires `src/main.tsx` with `QueryClientProvider` (keeps Mantine wiring if present).
+This installs TanStack Query packages and rewires `src/main.tsx` with `QueryClientProvider` (keeps Mantine wiring if present). It does not touch `src/App.tsx`.
 
 Add deploy artifacts to an existing project:
 
@@ -58,6 +58,21 @@ go-sparky add netlify   # netlify.toml
 go-sparky add framer-motion  # Framer Motion
 go-sparky add shadcn    # shadcn-ui init (interactive)
 go-sparky add bulma     # Bulma CSS (+ auto @import in src/index.css)
+```
+
+What each add does:
+- `add docker` – writes Dockerfile + docker-compose.yml.
+- `add vercel` – writes vercel.json.
+- `add netlify` – writes netlify.toml.
+- `add framer-motion` – installs framer-motion; no file rewrites.
+- `add shadcn` – runs interactive shadcn-ui init (requires Tailwind); skips if components.json exists; does not add components or touch `src/App.tsx`.
+- `add bulma` – installs Bulma and prepends `@import 'bulma/css/bulma.min.css';` to `src/index.css` if present; no other files touched.
+
+Adjust ESLint strictness:
+
+```sh
+go-sparky lint relax   # remove unicorn; disable import ordering/newline rules; keep recommended core rules
+go-sparky lint reset   # restore the default strict config
 ```
 
 Remove Mantine from an existing project (keeps `src/App.tsx` untouched):
@@ -85,6 +100,13 @@ go-sparky remove netlify   # removes netlify.toml if unmodified
 go-sparky remove framer-motion  # uninstalls framer-motion
 go-sparky remove bulma     # uninstalls bulma
 ```
+
+What each remove does:
+- `remove docker` – deletes Dockerfile + docker-compose.yml only if they match the generated content.
+- `remove vercel` – deletes vercel.json only if it matches the generated content.
+- `remove netlify` – deletes netlify.toml only if it matches the generated content.
+- `remove framer-motion` – uninstalls framer-motion; no file rewrites.
+- `remove bulma` – uninstalls bulma; does not edit CSS, so remove any Bulma @import you added.
 
 Add shadcn/ui:
 
