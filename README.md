@@ -20,16 +20,79 @@ go-sparky new my-app
 ```
 
 Flags:
-- `--mantine` – add Mantine UI and wrap the app in `MantineProvider` (enables PostCSS preset)
+- `--mantine` – add Mantine UI and wrap the app in `MantineProvider` (enables PostCSS preset). Uses the default App template unless combined with `--styled`.
 - `--no-tailwind` – skip Tailwind (default installs)
 - `--no-react-query` – skip TanStack Query (default installs)
 - `--no-eslint` – skip ESLint (default installs)
 - `--no-prettier` – skip Prettier (default installs)
 - `--no-husky` – skip Husky + lint-staged (default installs)
 - `--styled` – use the styled Mantine landing page template (requires `--mantine`)
+- `--no-framer-motion` – skip Framer Motion (default installs)
 - `--docker` – add Dockerfile + docker-compose.yml (dev + prod)
 - `--vercel` – add `vercel.json` for static deploys
 - `--netlify` – add `netlify.toml` with SPA redirect
+
+Add Mantine to an existing project (leaves `src/App.tsx` untouched):
+
+```sh
+go-sparky add mantine
+```
+
+This installs Mantine packages, writes `postcss.config.cjs`, and rewires `src/main.tsx` to wrap `MantineProvider` (keeps React Query wiring if its deps are present).
+Note: `go-sparky add mantine --styled` is not supported; the styled template is only applied during `go-sparky new --mantine --styled` to avoid overwriting your existing `src/App.tsx`.
+
+Add React Query to an existing project (leaves `src/App.tsx` untouched):
+
+```sh
+go-sparky add react-query
+```
+
+This installs TanStack Query packages and rewires `src/main.tsx` with `QueryClientProvider` (keeps Mantine wiring if present).
+
+Add deploy artifacts to an existing project:
+
+```sh
+go-sparky add docker    # Dockerfile + docker-compose.yml
+go-sparky add vercel    # vercel.json
+go-sparky add netlify   # netlify.toml
+go-sparky add framer-motion  # Framer Motion
+go-sparky add shadcn    # shadcn-ui init (interactive)
+go-sparky add bulma     # Bulma CSS (+ auto @import in src/index.css)
+```
+
+Remove Mantine from an existing project (keeps `src/App.tsx` untouched):
+
+```sh
+go-sparky remove mantine
+```
+
+This uninstalls Mantine packages, removes the Mantine PostCSS plugins (deletes `postcss.config.cjs` if it matches the generated content), and rewrites `src/main.tsx` to remove `MantineProvider` while keeping React Query wiring if present.
+
+Remove React Query from an existing project (keeps `src/App.tsx` untouched):
+
+```sh
+go-sparky remove react-query
+```
+
+This uninstalls TanStack Query packages and rewrites `src/main.tsx` to remove `QueryClientProvider` while keeping Mantine wiring if present.
+
+Remove generated deploy artifacts:
+
+```sh
+go-sparky remove docker    # removes Dockerfile + docker-compose.yml if unmodified
+go-sparky remove vercel    # removes vercel.json if unmodified
+go-sparky remove netlify   # removes netlify.toml if unmodified
+go-sparky remove framer-motion  # uninstalls framer-motion
+go-sparky remove bulma     # uninstalls bulma
+```
+
+Add shadcn/ui:
+
+```sh
+go-sparky add shadcn
+```
+
+This runs the official `shadcn-ui` init on top of Tailwind (interactive prompts). If `components.json` already exists, it skips init and reminds you to add components with `pnpm dlx shadcn-ui@latest add <component>`.
 
 TODO:
 - Add opt-in flags for additional CSS frameworks.

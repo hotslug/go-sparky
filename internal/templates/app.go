@@ -194,9 +194,5 @@ func AppTemplate(p plan.Plan) string {
 		return styledMantineApp
 	}
 
-	if p.Mantine {
-		return mantineApp
-	}
-
 	return basicApp
 }

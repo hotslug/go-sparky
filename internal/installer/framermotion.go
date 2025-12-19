@@ -15,3 +15,14 @@ func InstallFramerMotion() error {
 	spin("Installed Framer Motion")
 	return nil
 }
+
+// RemoveFramerMotion uninstalls Framer Motion.
+func RemoveFramerMotion() error {
+	spin := logger.StartSpinner("Removing Framer Motion")
+	if err := runner.RunQuiet("pnpm", "remove", "framer-motion"); err != nil {
+		spin("Failed to remove Framer Motion")
+		return err
+	}
+	spin("Removed Framer Motion")
+	return nil
+}

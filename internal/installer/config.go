@@ -4,6 +4,22 @@ import (
 	"os"
 )
 
+const postcssConfigContent = `module.exports = {
+  plugins: {
+    'postcss-preset-mantine': {},
+    'postcss-simple-vars': {
+      variables: {
+        'mantine-breakpoint-xs': '36em',
+        'mantine-breakpoint-sm': '48em',
+        'mantine-breakpoint-md': '62em',
+        'mantine-breakpoint-lg': '75em',
+        'mantine-breakpoint-xl': '88em',
+      },
+    },
+  },
+};
+`
+
 // WriteViteConfig writes vite.config.ts, optionally including the Tailwind plugin.
 func WriteViteConfig(includeTailwind bool) error {
 	content := `import { defineConfig } from "vite";
@@ -42,21 +58,22 @@ export default defineConfig({
 
 // WritePostCSSConfig writes postcss.config.cjs with a lightweight Mantine preset.
 func WritePostCSSConfig() error {
-	content := `module.exports = {
-  plugins: {
-    'postcss-preset-mantine': {},
-    'postcss-simple-vars': {
-      variables: {
-        'mantine-breakpoint-xs': '36em',
-        'mantine-breakpoint-sm': '48em',
-        'mantine-breakpoint-md': '62em',
-        'mantine-breakpoint-lg': '75em',
-        'mantine-breakpoint-xl': '88em',
-      },
-    },
-  },
-};
-`
+	return os.WriteFile("postcss.config.cjs", []byte(postcssConfigContent), 0o644)
+}
 
-	return os.WriteFile("postcss.config.cjs", []byte(content), 0o644)
+// DeletePostCSSConfigIfOwned deletes postcss.config.cjs when it matches our generated content.
+func DeletePostCSSConfigIfOwned() error {
+	data, err := os.ReadFile("postcss.config.cjs")
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+
+	if string(data) != postcssConfigContent {
+		return nil
+	}
+
+	return os.Remove("postcss.config.cjs")
 }

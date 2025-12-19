@@ -11,15 +11,7 @@ func PrettierConfig() string {
   "arrowParens": "avoid",
   "endOfLine": "lf",
   "semi": false,
-  "plugins": [
-    "prettier-plugin-tailwindcss",
-    "@ianvs/prettier-plugin-sort-imports"
-  ],
-  "importOrder": [
-    "^@/(.*)$",
-    "^[./]"
-  ],
-  "importOrderSeparation": true
+  "plugins": ["prettier-plugin-tailwindcss"]
 }
 `
 }

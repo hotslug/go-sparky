@@ -23,6 +23,7 @@ func newNewCmd() *cobra.Command {
 		flagNoPrettier   bool
 		flagNoHusky      bool
 		flagStyled       bool
+		flagNoFramer     bool
 		flagDocker       bool
 		flagVercel       bool
 		flagNetlify      bool
@@ -50,6 +51,7 @@ func newNewCmd() *cobra.Command {
 				Prettier:   !flagNoPrettier,
 				Husky:      !flagNoHusky,
 				StyledApp:  flagStyled && flagMantine,
+				Framer:     !flagNoFramer,
 				Docker:     flagDocker,
 				Vercel:     flagVercel,
 				Netlify:    flagNetlify,
@@ -97,8 +99,10 @@ func newNewCmd() *cobra.Command {
 				}
 			}
 
-			if err := installer.InstallFramerMotion(); err != nil {
-				return err
+			if p.Framer {
+				if err := installer.InstallFramerMotion(); err != nil {
+					return err
+				}
 			}
 
 			if p.Tailwind {
@@ -196,6 +200,7 @@ func newNewCmd() *cobra.Command {
 	cmd.Flags().BoolVar(&flagNoPrettier, "no-prettier", false, "Skip Prettier (default installs)")
 	cmd.Flags().BoolVar(&flagNoHusky, "no-husky", false, "Skip Husky + lint-staged (default installs)")
 	cmd.Flags().BoolVar(&flagStyled, "styled", false, "Use styled App template (requires mantine)")
+	cmd.Flags().BoolVar(&flagNoFramer, "no-framer-motion", false, "Skip Framer Motion (default installs)")
 	cmd.Flags().BoolVar(&flagDocker, "docker", false, "Add Dockerfile and docker-compose.yml")
 	cmd.Flags().BoolVar(&flagVercel, "vercel", false, "Add Vercel static build config")
 	cmd.Flags().BoolVar(&flagNetlify, "netlify", false, "Add Netlify deploy config")

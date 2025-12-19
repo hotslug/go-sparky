@@ -18,8 +18,8 @@ func TestAppTemplateSelection(t *testing.T) {
 	t.Run("basic mantine", func(t *testing.T) {
 		p := plan.Plan{Mantine: true}
 		got := AppTemplate(p)
-		if got != mantineApp {
-			t.Fatalf("expected Mantine template")
+		if got != basicApp {
+			t.Fatalf("expected basic template when Mantine without styled")
 		}
 	})
 

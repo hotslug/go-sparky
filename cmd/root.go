@@ -9,8 +9,8 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "go-sparky",
-	Short: "Scaffold a modern React app with Vite",
+	Use:           "go-sparky",
+	Short:         "Scaffold a modern React app with Vite",
 	SilenceErrors: true,
 }
 
@@ -30,6 +30,8 @@ func init() {
 	}
 
 	rootCmd.PersistentFlags().BoolVarP(&flagVerbose, "verbose", "v", true, "Enable verbose output (spinners, extra logs)")
+	rootCmd.AddCommand(newAddCmd())
+	rootCmd.AddCommand(newRemoveCmd())
 	rootCmd.AddCommand(newNewCmd())
 	rootCmd.AddCommand(newVersionCmd())
 }

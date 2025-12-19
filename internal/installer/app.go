@@ -10,11 +10,11 @@ import (
 
 // WriteAppFiles updates the scaffolded source files with our templates.
 func WriteAppFiles(p plan.Plan) error {
-	if err := os.WriteFile(filepath.Join("src", "App.tsx"), []byte(templates.AppTemplate(p)), 0o644); err != nil {
+	if err := WriteAppFile(p); err != nil {
 		return err
 	}
 
-	if err := os.WriteFile(filepath.Join("src", "main.tsx"), []byte(templates.MainTemplate(p)), 0o644); err != nil {
+	if err := WriteMainFile(p); err != nil {
 		return err
 	}
 
@@ -36,6 +36,16 @@ func WriteAppFiles(p plan.Plan) error {
 	}
 
 	return os.WriteFile(filepath.Join(".", "README.md"), []byte(templates.Readme(p)), 0o644)
+}
+
+// WriteAppFile writes the App.tsx template based on the plan.
+func WriteAppFile(p plan.Plan) error {
+	return os.WriteFile(filepath.Join("src", "App.tsx"), []byte(templates.AppTemplate(p)), 0o644)
+}
+
+// WriteMainFile writes the main.tsx template based on the plan.
+func WriteMainFile(p plan.Plan) error {
+	return os.WriteFile(filepath.Join("src", "main.tsx"), []byte(templates.MainTemplate(p)), 0o644)
 }
 
 const baseIndexCSS = `@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');

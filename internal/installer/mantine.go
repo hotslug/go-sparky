@@ -53,3 +53,52 @@ func InstallMantine() error {
 	spin("Installed Mantine PostCSS plugins")
 	return nil
 }
+
+// RemoveMantine removes Mantine dependencies and related PostCSS plugins.
+func RemoveMantine() error {
+	spin := logger.StartSpinner("Removing Mantine packages")
+	if err := runner.RunQuiet(
+		"pnpm",
+		"remove",
+		"@mantine/core",
+		"@mantine/hooks",
+		"@mantine/form",
+		"@mantine/dates",
+		"dayjs",
+		"@mantine/charts",
+		"recharts",
+		"@mantine/notifications",
+		"@mantine/code-highlight",
+		"@mantine/tiptap",
+		"@tiptap/pm",
+		"@tiptap/react",
+		"@tiptap/extension-link",
+		"@tiptap/starter-kit",
+		"@mantine/dropzone",
+		"@mantine/carousel",
+		"embla-carousel",
+		"embla-carousel-react",
+		"@mantine/spotlight",
+		"@mantine/modals",
+		"@mantine/nprogress",
+	); err != nil {
+		spin("Failed to remove Mantine")
+		return err
+	}
+	spin("Removed Mantine packages")
+
+	spin = logger.StartSpinner("Removing Mantine PostCSS plugins")
+	if err := runner.RunQuiet(
+		"pnpm",
+		"remove",
+		"-D",
+		"postcss",
+		"postcss-preset-mantine",
+		"postcss-simple-vars",
+	); err != nil {
+		spin("Failed to remove Mantine PostCSS plugins")
+		return err
+	}
+	spin("Removed Mantine PostCSS plugins")
+	return nil
+}
