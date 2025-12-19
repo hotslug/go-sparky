@@ -31,7 +31,11 @@ func WriteAppFiles(p plan.Plan) error {
 		css = tailwindIndexCSS
 	}
 
-	return os.WriteFile(filepath.Join("src", "index.css"), []byte(css), 0o644)
+	if err := os.WriteFile(filepath.Join("src", "index.css"), []byte(css), 0o644); err != nil {
+		return err
+	}
+
+	return os.WriteFile(filepath.Join(".", "README.md"), []byte(templates.Readme(p)), 0o644)
 }
 
 const baseIndexCSS = `@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
