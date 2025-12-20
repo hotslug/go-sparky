@@ -10,6 +10,7 @@ import (
 	"github.com/hotslug/go-sparky/internal/installer"
 	"github.com/hotslug/go-sparky/internal/logger"
 	"github.com/hotslug/go-sparky/internal/plan"
+	"github.com/hotslug/go-sparky/internal/templates"
 	"github.com/hotslug/go-sparky/internal/version"
 	"github.com/spf13/cobra"
 )
@@ -22,6 +23,7 @@ func newRemoveCmd() *cobra.Command {
 
 	cmd.AddCommand(newRemoveMantineCmd())
 	cmd.AddCommand(newRemoveReactQueryCmd())
+	cmd.AddCommand(newRemoveZustandCmd())
 	cmd.AddCommand(newRemoveDockerCmd())
 	cmd.AddCommand(newRemoveVercelCmd())
 	cmd.AddCommand(newRemoveNetlifyCmd())
@@ -141,6 +143,68 @@ func newRemoveReactQueryCmd() *cobra.Command {
 			}
 
 			logger.Info("\nReact Query removed. src/main.tsx updated to remove QueryClientProvider. App.tsx left untouched.")
+			return nil
+		},
+	}
+}
+
+func newRemoveZustandCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "zustand",
+		Short: "Uninstall Zustand and remove the starter store if unmodified",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger.PrintBanner()
+
+			if _, err := exec.LookPath("pnpm"); err != nil {
+				return fmt.Errorf("pnpm not found: %w", err)
+			}
+
+			if err := version.CheckNodeVersion(); err != nil {
+				return err
+			}
+
+			if _, err := os.Stat("package.json"); err != nil {
+				if os.IsNotExist(err) {
+					return fmt.Errorf("package.json not found. Run this inside your existing app directory")
+				}
+				return err
+			}
+
+			appPath := filepath.Join("src", "App.tsx")
+			appContent, err := os.ReadFile(appPath)
+			if err != nil {
+				if os.IsNotExist(err) {
+					return fmt.Errorf("src/App.tsx not found. Run this in a Vite React project")
+				}
+				return err
+			}
+
+			appMatchesGenerated := string(appContent) == templates.AppTemplate(plan.Plan{Zustand: true})
+			appUsesStore := bytes.Contains(appContent, []byte("useSparkyStore"))
+
+			if err := installer.RemoveZustand(); err != nil {
+				return err
+			}
+
+			switch {
+			case appMatchesGenerated:
+				if err := installer.WriteAppFile(plan.Plan{}); err != nil {
+					return err
+				}
+				if err := installer.DeleteZustandStoreIfOwned(); err != nil {
+					return err
+				}
+				logger.Info("\nZustand removed. src/App.tsx reset to the basic template and demo store deleted.")
+			case !appUsesStore:
+				if err := installer.DeleteZustandStoreIfOwned(); err != nil {
+					return err
+				}
+				logger.Info("\nZustand removed. App.tsx left untouched.")
+			default:
+				logger.Warning("\nZustand removed, but src/App.tsx still references useSparkyStore; update your state to avoid missing imports.")
+			}
+
 			return nil
 		},
 	}

@@ -30,6 +30,9 @@ func Readme(p plan.Plan) string {
 	if p.Mantine {
 		features = append(features, "Mantine UI (with Mantine PostCSS preset)")
 	}
+	if p.Zustand {
+		features = append(features, "Zustand state store (demo slice in src/stores/useSparkyStore.ts)")
+	}
 	if p.ReactQuery {
 		features = append(features, "TanStack Query + Devtools")
 	}
@@ -79,6 +82,12 @@ func Readme(p plan.Plan) string {
 		b.WriteString("## Mantine\n")
 		b.WriteString("- Styles imported in `src/App.tsx`\n")
 		b.WriteString("- MantineProvider set up in `src/main.tsx`\n\n")
+	}
+
+	if p.Zustand {
+		b.WriteString("## Zustand\n")
+		b.WriteString("- Demo slice: `src/stores/useSparkyStore.ts`\n")
+		b.WriteString("- Replace or split slices to match your app state\n\n")
 	}
 
 	if p.Tailwind {

@@ -1,7 +1,0 @@
-./app.go
-./eslint.go
-./husky.go
-./main.go
-./prettier.go
-./app_test.go
-./main_test.go

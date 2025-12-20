@@ -1,0 +1,15 @@
+.gocache/
+bin/
+dist/
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.prof
+*.coverprofile
+coverage.out
+.DS_Store
+.idea/
+.vscode/

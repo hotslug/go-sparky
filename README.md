@@ -2,7 +2,7 @@
 
 # go-sparky
 
-CLI scaffolder for React + Vite + TypeScript that installs an opinionated default stack (Tailwind, TanStack Query, ESLint, Prettier, Husky, Framer Motion) and rewrites the starter files with matching templates. Mantine and deploy configs are optional.
+CLI scaffolder for React + Vite + TypeScript that installs an opinionated default stack (Tailwind, Zustand, TanStack Query, ESLint, Prettier, Husky, Framer Motion) and rewrites the starter files with matching templates. Mantine and deploy configs are optional.
 
 ## Prerequisites
 - Go 1.21+ (to build/run the CLI)
@@ -13,7 +13,7 @@ CLI scaffolder for React + Vite + TypeScript that installs an opinionated defaul
 - From source in this repo: `go run . --help` or `go build .` then run `./go-sparky`
 
 ## Usage
-Scaffold a new app into a fresh directory (defaults to Tailwind, React Query, ESLint, Prettier, Husky, Framer Motion):
+Scaffold a new app into a fresh directory (defaults to Tailwind, Zustand, React Query, ESLint, Prettier, Husky, Framer Motion):
 
 ```sh
 go-sparky new my-app
@@ -23,6 +23,7 @@ Flags:
 - `--mantine` – add Mantine UI and wrap the app in `MantineProvider` (enables PostCSS preset). Uses the default App template unless combined with `--styled`.
 - `--no-tailwind` – skip Tailwind (default installs)
 - `--no-react-query` – skip TanStack Query (default installs)
+- `--no-zustand` – skip Zustand (default installs)
 - `--no-eslint` – skip ESLint (default installs)
 - `--no-prettier` – skip Prettier (default installs)
 - `--no-husky` – skip Husky + lint-staged (default installs)
@@ -49,6 +50,14 @@ go-sparky add react-query
 
 This installs TanStack Query packages and rewires `src/main.tsx` with `QueryClientProvider` (keeps Mantine wiring if present). It does not touch `src/App.tsx`.
 
+Add Zustand to an existing project (leaves `src/App.tsx` untouched):
+
+```sh
+go-sparky add zustand
+```
+
+This installs Zustand and adds a `src/stores/useSparkyStore.ts` demo slice (only if that file is missing). It does not touch `src/App.tsx`.
+
 Add deploy artifacts to an existing project:
 
 ```sh
@@ -65,6 +74,7 @@ What each add does:
 - `add vercel` – writes vercel.json.
 - `add netlify` – writes netlify.toml.
 - `add framer-motion` – installs framer-motion; no file rewrites.
+- `add zustand` – installs zustand; adds src/stores/useSparkyStore.ts if missing; App.tsx left alone.
 - `add shadcn` – runs interactive shadcn-ui init (requires Tailwind); skips if components.json exists; does not add components or touch `src/App.tsx`.
 - `add bulma` – installs Bulma and prepends `@import 'bulma/css/bulma.min.css';` to `src/index.css` if present; no other files touched.
 
@@ -91,6 +101,14 @@ go-sparky remove react-query
 
 This uninstalls TanStack Query packages and rewrites `src/main.tsx` to remove `QueryClientProvider` while keeping Mantine wiring if present.
 
+Remove Zustand from an existing project:
+
+```sh
+go-sparky remove zustand
+```
+
+This uninstalls Zustand, deletes the demo store if it matches the generated content, and resets `src/App.tsx` to the basic template when it matches the generated Zustand template. If your `App.tsx` still references Zustand, you will be prompted to clean it up manually.
+
 Remove generated deploy artifacts:
 
 ```sh
@@ -106,6 +124,7 @@ What each remove does:
 - `remove vercel` – deletes vercel.json only if it matches the generated content.
 - `remove netlify` – deletes netlify.toml only if it matches the generated content.
 - `remove framer-motion` – uninstalls framer-motion; no file rewrites.
+- `remove zustand` – uninstalls zustand; removes the demo store and resets the generated App template when untouched.
 - `remove bulma` – uninstalls bulma; does not edit CSS, so remove any Bulma @import you added.
 
 Add shadcn/ui:

@@ -18,6 +18,12 @@ func WriteAppFiles(p plan.Plan) error {
 		return err
 	}
 
+	if p.Zustand {
+		if err := WriteZustandStore(); err != nil {
+			return err
+		}
+	}
+
 	if err := os.MkdirAll(filepath.Join("src", "assets"), 0o755); err != nil {
 		return err
 	}

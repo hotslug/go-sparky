@@ -6,6 +6,7 @@ type Plan struct {
 	Mantine    bool
 	Tailwind   bool
 	ReactQuery bool
+	Zustand    bool
 	Eslint     bool
 	Prettier   bool
 	Husky      bool

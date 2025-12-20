@@ -23,6 +23,7 @@ func newAddCmd() *cobra.Command {
 
 	cmd.AddCommand(newAddMantineCmd())
 	cmd.AddCommand(newAddReactQueryCmd())
+	cmd.AddCommand(newAddZustandCmd())
 	cmd.AddCommand(newAddDockerCmd())
 	cmd.AddCommand(newAddVercelCmd())
 	cmd.AddCommand(newAddNetlifyCmd())
@@ -154,6 +155,49 @@ func newAddReactQueryCmd() *cobra.Command {
 			}
 
 			logger.Info("\nReact Query added. src/main.tsx updated with QueryClientProvider. App.tsx left untouched.")
+			return nil
+		},
+	}
+}
+
+func newAddZustandCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "zustand",
+		Short: "Install Zustand and add a starter store (App.tsx untouched)",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger.PrintBanner()
+
+			if _, err := exec.LookPath("pnpm"); err != nil {
+				return fmt.Errorf("pnpm not found: %w", err)
+			}
+
+			if err := version.CheckNodeVersion(); err != nil {
+				return err
+			}
+
+			if _, err := os.Stat("package.json"); err != nil {
+				if os.IsNotExist(err) {
+					return fmt.Errorf("package.json not found. Run this inside your existing app directory")
+				}
+				return err
+			}
+
+			if err := installer.InstallZustand(); err != nil {
+				return err
+			}
+
+			created, err := installer.WriteZustandStoreIfMissing()
+			if err != nil {
+				return err
+			}
+
+			if created {
+				logger.Info("\nZustand installed. Added src/stores/useSparkyStore.ts. App.tsx left untouched.")
+				return nil
+			}
+
+			logger.Info("\nZustand installed. src/stores/useSparkyStore.ts already exists; left untouched. App.tsx left untouched.")
 			return nil
 		},
 	}

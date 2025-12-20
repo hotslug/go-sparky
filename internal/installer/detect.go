@@ -26,6 +26,16 @@ func HasMantineDependency() bool {
 	return bytes.Contains(data, []byte("@mantine/core"))
 }
 
+// HasZustandDependency reports whether package.json lists zustand.
+func HasZustandDependency() bool {
+	data, err := os.ReadFile("package.json")
+	if err != nil {
+		return false
+	}
+
+	return bytes.Contains(data, []byte("\"zustand\""))
+}
+
 // HasTailwind reports whether tailwindcss appears in package.json or a tailwind config exists.
 func HasTailwind() bool {
 	if hasTailwindPackage() {

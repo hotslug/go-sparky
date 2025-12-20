@@ -8,7 +8,7 @@ import (
 
 func TestAppTemplateSelection(t *testing.T) {
 	t.Run("styled mantine", func(t *testing.T) {
-		p := plan.Plan{Mantine: true, StyledApp: true}
+		p := plan.Plan{Mantine: true, StyledApp: true, Zustand: true}
 		got := AppTemplate(p)
 		if got != styledMantineApp {
 			t.Fatalf("expected styled Mantine template")
@@ -20,6 +20,14 @@ func TestAppTemplateSelection(t *testing.T) {
 		got := AppTemplate(p)
 		if got != basicApp {
 			t.Fatalf("expected basic template when Mantine without styled")
+		}
+	})
+
+	t.Run("zustand default", func(t *testing.T) {
+		p := plan.Plan{Zustand: true}
+		got := AppTemplate(p)
+		if got != zustandApp {
+			t.Fatalf("expected zustand template when zustand enabled")
 		}
 	})
 

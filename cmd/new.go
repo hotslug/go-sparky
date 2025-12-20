@@ -19,6 +19,7 @@ func newNewCmd() *cobra.Command {
 		flagMantine      bool
 		flagNoTailwind   bool
 		flagNoReactQuery bool
+		flagNoZustand    bool
 		flagNoEslint     bool
 		flagNoPrettier   bool
 		flagNoHusky      bool
@@ -47,6 +48,7 @@ func newNewCmd() *cobra.Command {
 				Mantine:    flagMantine,
 				Tailwind:   !flagNoTailwind,
 				ReactQuery: !flagNoReactQuery,
+				Zustand:    !flagNoZustand,
 				Eslint:     !flagNoEslint,
 				Prettier:   !flagNoPrettier,
 				Husky:      !flagNoHusky,
@@ -113,6 +115,12 @@ func newNewCmd() *cobra.Command {
 
 			if p.ReactQuery {
 				if err := installer.InstallReactQuery(); err != nil {
+					return err
+				}
+			}
+
+			if p.Zustand {
+				if err := installer.InstallZustand(); err != nil {
 					return err
 				}
 			}
@@ -196,6 +204,7 @@ func newNewCmd() *cobra.Command {
 	cmd.Flags().BoolVar(&flagMantine, "mantine", false, "Install Mantine")
 	cmd.Flags().BoolVar(&flagNoTailwind, "no-tailwind", false, "Skip Tailwind (default installs)")
 	cmd.Flags().BoolVar(&flagNoReactQuery, "no-react-query", false, "Skip TanStack Query (default installs)")
+	cmd.Flags().BoolVar(&flagNoZustand, "no-zustand", false, "Skip Zustand (default installs)")
 	cmd.Flags().BoolVar(&flagNoEslint, "no-eslint", false, "Skip ESLint (default installs)")
 	cmd.Flags().BoolVar(&flagNoPrettier, "no-prettier", false, "Skip Prettier (default installs)")
 	cmd.Flags().BoolVar(&flagNoHusky, "no-husky", false, "Skip Husky + lint-staged (default installs)")
