@@ -15,14 +15,16 @@ func StartSpinner(msg string) func(finalMsg string) {
 	stop := make(chan struct{})
 
 	go func() {
-		frames := []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
+		// Chunkier block spinner is easier to see than the thin braille dots.
+		frames := []string{"⣿", "⣷", "⣯", "⣟", "⡿", "⢿", "⣻", "⣽"}
+		color := "\033[38;5;45m" // bright cyan
 		i := 0
 		for {
 			select {
 			case <-stop:
 				return
 			default:
-				fmt.Printf("\r\033[2K%s %s", frames[i%len(frames)], msg)
+				fmt.Printf("\r\033[2K%s%s\033[0m %s", color, frames[i%len(frames)], msg)
 				i++
 				time.Sleep(120 * time.Millisecond)
 			}
