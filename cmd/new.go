@@ -28,6 +28,7 @@ func newNewCmd() *cobra.Command {
 		flagDocker       bool
 		flagVercel       bool
 		flagNetlify      bool
+		flagStorybook    bool
 	)
 
 	cmd := &cobra.Command{
@@ -57,6 +58,7 @@ func newNewCmd() *cobra.Command {
 				Docker:     flagDocker,
 				Vercel:     flagVercel,
 				Netlify:    flagNetlify,
+				Storybook:  flagStorybook,
 			}
 
 			if _, err := exec.LookPath("pnpm"); err != nil {
@@ -143,6 +145,12 @@ func newNewCmd() *cobra.Command {
 				}
 			}
 
+			if p.Storybook {
+				if err := installer.InstallStorybook(); err != nil {
+					return err
+				}
+			}
+
 			spin = logger.StartSpinner("Finalizing templates")
 			if err := installer.WriteViteConfig(p.Tailwind); err != nil {
 				spin("Failed to finalize templates")
@@ -159,6 +167,13 @@ func newNewCmd() *cobra.Command {
 			if err := installer.WriteAppFiles(p); err != nil {
 				spin("Failed to finalize templates")
 				return err
+			}
+
+			if p.Storybook {
+				if err := installer.WriteStorybookConfig(true); err != nil {
+					spin("Failed to finalize templates")
+					return err
+				}
 			}
 			spin("Templates ready")
 
@@ -213,6 +228,7 @@ func newNewCmd() *cobra.Command {
 	cmd.Flags().BoolVar(&flagDocker, "docker", false, "Add Dockerfile and docker-compose.yml")
 	cmd.Flags().BoolVar(&flagVercel, "vercel", false, "Add Vercel static build config")
 	cmd.Flags().BoolVar(&flagNetlify, "netlify", false, "Add Netlify deploy config")
+	cmd.Flags().BoolVar(&flagStorybook, "storybook", false, "Add Storybook config and dependencies")
 
 	return cmd
 }

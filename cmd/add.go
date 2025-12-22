@@ -30,6 +30,7 @@ func newAddCmd() *cobra.Command {
 	cmd.AddCommand(newAddFramerMotionCmd())
 	cmd.AddCommand(newAddShadcnCmd())
 	cmd.AddCommand(newAddBulmaCmd())
+	cmd.AddCommand(newAddStorybookCmd())
 	return cmd
 }
 
@@ -285,6 +286,62 @@ func newAddFramerMotionCmd() *cobra.Command {
 			}
 
 			logger.Info("\nFramer Motion installed. App.tsx left untouched.")
+			return nil
+		},
+	}
+}
+
+func newAddStorybookCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "storybook",
+		Short: "Install Storybook with Vite + React defaults",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger.PrintBanner()
+
+			if _, err := exec.LookPath("pnpm"); err != nil {
+				return fmt.Errorf("pnpm not found: %w", err)
+			}
+
+			if err := version.CheckNodeVersion(); err != nil {
+				return err
+			}
+
+			if _, err := os.Stat("package.json"); err != nil {
+				if os.IsNotExist(err) {
+					return fmt.Errorf("package.json not found. Run this inside your existing app directory")
+				}
+				return err
+			}
+
+			if installer.HasStorybookConfig() {
+				logger.Warning("\n.storybook already exists; leaving your Storybook config unchanged.")
+				logger.Info("\nStart it with `pnpm storybook dev -p 6006` or update your existing config manually.")
+				return nil
+			}
+
+			indexCSSExists := true
+			if _, err := os.Stat(filepath.Join("src", "index.css")); err != nil {
+				if os.IsNotExist(err) {
+					indexCSSExists = false
+				} else {
+					return err
+				}
+			}
+
+			if err := installer.InstallStorybook(); err != nil {
+				return err
+			}
+
+			if err := installer.WriteStorybookConfig(indexCSSExists); err != nil {
+				return err
+			}
+
+			if !indexCSSExists {
+				logger.Warning("\nsrc/index.css not found; update .storybook/preview.ts to import your global styles if needed.")
+			}
+
+			logger.Info("\nStorybook added. Start it with `pnpm storybook dev -p 6006`.")
 			return nil
 		},
 	}

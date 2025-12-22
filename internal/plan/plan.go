@@ -15,4 +15,5 @@ type Plan struct {
 	Docker     bool
 	Vercel     bool
 	Netlify    bool
+	Storybook  bool
 }

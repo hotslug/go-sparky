@@ -45,6 +45,9 @@ func Readme(p plan.Plan) string {
 	if p.Husky {
 		features = append(features, "Husky + lint-staged pre-commit")
 	}
+	if p.Storybook {
+		features = append(features, "Storybook (Vite + React config; starter story in src/stories)")
+	}
 	if p.Docker {
 		features = append(features, "Dockerfile + docker-compose (dev/prod)")
 	}
@@ -75,6 +78,9 @@ func Readme(p plan.Plan) string {
 	}
 	if p.Prettier {
 		b.WriteString("- `pnpm format` (optional) – run Prettier\n")
+	}
+	if p.Storybook {
+		b.WriteString("- `pnpm storybook dev -p 6006` – run Storybook\n")
 	}
 	b.WriteString("\n")
 

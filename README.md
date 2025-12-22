@@ -32,6 +32,7 @@ Flags:
 - `--docker` – add Dockerfile + docker-compose.yml (dev + prod)
 - `--vercel` – add `vercel.json` for static deploys
 - `--netlify` – add `netlify.toml` with SPA redirect
+- `--storybook` – add Storybook config, starter story, and deps (Vite + React)
 
 Add Mantine to an existing project (leaves `src/App.tsx` untouched):
 
@@ -67,6 +68,7 @@ go-sparky add netlify   # netlify.toml
 go-sparky add framer-motion  # Framer Motion
 go-sparky add shadcn    # shadcn-ui init (interactive)
 go-sparky add bulma     # Bulma CSS (+ auto @import in src/index.css)
+go-sparky add storybook # Storybook config + starter story
 ```
 
 What each add does:
@@ -77,6 +79,7 @@ What each add does:
 - `add zustand` – installs zustand; adds src/stores/useSparkyStore.ts if missing; App.tsx left alone.
 - `add shadcn` – runs interactive shadcn-ui init (requires Tailwind); skips if components.json exists; does not add components or touch `src/App.tsx`.
 - `add bulma` – installs Bulma and prepends `@import 'bulma/css/bulma.min.css';` to `src/index.css` if present; no other files touched.
+- `add storybook` – installs Storybook for Vite + React; writes `.storybook/main.ts`, `.storybook/preview.ts`, and a starter story in `src/stories`. App.tsx is left untouched. Start it with `pnpm storybook dev -p 6006`.
 
 Adjust ESLint strictness:
 
