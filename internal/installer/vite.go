@@ -2,13 +2,13 @@ package installer
 
 import (
 	"github.com/hotslug/go-sparky/internal/logger"
-	"github.com/hotslug/go-sparky/internal/runner"
+	"github.com/hotslug/go-sparky/internal/plan"
 )
 
 // InstallViteReactPlugin ensures @vitejs/plugin-react is installed to match our Vite config template.
-func InstallViteReactPlugin() error {
+func InstallViteReactPlugin(p plan.Plan) error {
 	spin := logger.StartSpinner("Installing Vite React plugin")
-	if err := runner.RunQuiet("pnpm", "install", "-D", "@vitejs/plugin-react@latest"); err != nil {
+	if err := addDependencies(p, true, "@vitejs/plugin-react@latest"); err != nil {
 		spin("Failed to install Vite React plugin")
 		return err
 	}

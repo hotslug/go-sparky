@@ -2,15 +2,13 @@ package installer
 
 import (
 	"github.com/hotslug/go-sparky/internal/logger"
-	"github.com/hotslug/go-sparky/internal/runner"
+	"github.com/hotslug/go-sparky/internal/plan"
 )
 
 // InstallMantine installs Mantine dependencies.
-func InstallMantine() error {
+func InstallMantine(p plan.Plan) error {
 	spin := logger.StartSpinner("Installing Mantine packages")
-	if err := runner.RunQuiet(
-		"pnpm",
-		"install",
+	if err := addDependencies(p, false,
 		"@mantine/core@latest",
 		"@mantine/hooks@latest",
 		"@mantine/form@latest",
@@ -39,10 +37,7 @@ func InstallMantine() error {
 	spin("Installed Mantine packages")
 
 	spin = logger.StartSpinner("Installing Mantine PostCSS plugins")
-	if err := runner.RunQuiet(
-		"pnpm",
-		"install",
-		"-D",
+	if err := addDependencies(p, true,
 		"postcss@latest",
 		"postcss-preset-mantine@latest",
 		"postcss-simple-vars@latest",
@@ -55,11 +50,9 @@ func InstallMantine() error {
 }
 
 // RemoveMantine removes Mantine dependencies and related PostCSS plugins.
-func RemoveMantine() error {
+func RemoveMantine(p plan.Plan) error {
 	spin := logger.StartSpinner("Removing Mantine packages")
-	if err := runner.RunQuiet(
-		"pnpm",
-		"remove",
+	if err := removeDependencies(p, false,
 		"@mantine/core",
 		"@mantine/hooks",
 		"@mantine/form",
@@ -88,10 +81,7 @@ func RemoveMantine() error {
 	spin("Removed Mantine packages")
 
 	spin = logger.StartSpinner("Removing Mantine PostCSS plugins")
-	if err := runner.RunQuiet(
-		"pnpm",
-		"remove",
-		"-D",
+	if err := removeDependencies(p, true,
 		"postcss",
 		"postcss-preset-mantine",
 		"postcss-simple-vars",

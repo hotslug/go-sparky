@@ -1,6 +1,10 @@
 package templates
 
-import "github.com/hotslug/go-sparky/internal/plan"
+import (
+	"strings"
+
+	"github.com/hotslug/go-sparky/internal/plan"
+)
 
 const styledMantineApp = `import sparky from './assets/sparky.png';
 
@@ -24,7 +28,7 @@ export default function App() {
               <div className="text-[1.5rem] text-slate-300 animate-fade-in-delay">Good boy.</div>
               <div className="inline-flex items-center uppercase gap-2 text-[10px] text-slate-400 bg-slate-800/50 px-2 py-1 rounded-full hover:bg-slate-700/50 transition-colors cursor-default">
                 <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                Vite + React + TypeScript
+                {{bundlerLabel}}
               </div>
               <div className="flex-shrink-0 text-start md:text-left" style={{ width: '400px' }}>
                 <p className="mt-4 text-base leading-relaxed text-slate-300">
@@ -73,7 +77,7 @@ export default function App() {
               <div className="text-[1.5rem] text-slate-300 animate-fade-in-delay">Good boy.</div>
               <div className="inline-flex items-center uppercase gap-2 text-[10px] text-slate-400 bg-slate-800/50 px-2 py-1 rounded-full hover:bg-slate-700/50 transition-colors cursor-default">
                 <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                Vite + React + TypeScript
+                {{bundlerLabel}}
               </div>
               <div className="flex-shrink-0 text-start md:text-left" style={{ width: '400px' }}>
                 <p className="mt-4 text-base leading-relaxed text-slate-300">
@@ -133,7 +137,7 @@ export default function App() {
                   <ul className="mt-3 space-y-2 text-sm text-slate-200">
                     <li className="flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                      Vite + React + TypeScript
+                      {{bundlerLabel}}
                     </li>
                     <li className="flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full bg-emerald-400" />
@@ -232,7 +236,7 @@ export default function App() {
                 letterSpacing: '0.08em',
               }}
             >
-              Vite + React + TypeScript
+              {{bundlerLabel}}
             </Badge>
             <Text style={{ color: '#cbd5f5' }}>
               Go-Sparky is a CLI scaffolder that spins up a fast, opinionated React stack with
@@ -278,7 +282,7 @@ export default function App() {
               <div className="text-[1.5rem] text-slate-300 animate-fade-in-delay">Good boy.</div>
               <div className="inline-flex items-center uppercase gap-2 text-[10px] text-slate-400 bg-slate-800/50 px-2 py-1 rounded-full hover:bg-slate-700/50 transition-colors cursor-default">
                 <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                Vite + React + TypeScript
+                {{bundlerLabel}}
               </div>
               <div className="flex-shrink-0 text-start md:text-left" style={{ width: '400px' }}>
                 <p className="mt-4 text-base leading-relaxed text-slate-300">
@@ -304,13 +308,18 @@ export default function App() {
 
 // AppTemplate selects the correct App.tsx template based on the plan.
 func AppTemplate(p plan.Plan) string {
+	bundlerLabel := "Vite + React + TypeScript"
+	if p.IsBun() {
+		bundlerLabel = "Bun + React + TypeScript"
+	}
+
 	if p.StyledApp && p.Mantine {
-		return styledMantineApp
+		return strings.ReplaceAll(styledMantineApp, "{{bundlerLabel}}", bundlerLabel)
 	}
 
 	if p.Zustand {
-		return zustandApp
+		return strings.ReplaceAll(zustandApp, "{{bundlerLabel}}", bundlerLabel)
 	}
 
-	return basicApp
+	return strings.ReplaceAll(basicApp, "{{bundlerLabel}}", bundlerLabel)
 }

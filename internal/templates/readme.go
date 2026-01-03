@@ -16,12 +16,38 @@ func Readme(p plan.Plan) string {
 		title = "New App"
 	}
 
+	bundlerLabel := "Vite"
+	entryFile := "src/main.tsx"
+	devPort := "5173"
+	storybookNote := "Storybook (Vite + React config; starter story in src/stories)"
+	tailwindNote := "Configured via `@tailwindcss/vite`"
+	quickstartCmd := "pnpm dev"
+	buildCmd := "pnpm build"
+	testCmd := "pnpm test"
+	lintCmd := "pnpm lint"
+	formatCmd := "pnpm format"
+	storybookCmd := "pnpm storybook dev -p 6006"
+
+	if p.IsBun() {
+		bundlerLabel = "Bun"
+		entryFile = "src/frontend.tsx"
+		devPort = "3000"
+		storybookNote = "Storybook (React config; starter story in src/stories)"
+		tailwindNote = "Configured via `bun-plugin-tailwind`"
+		quickstartCmd = "bun dev"
+		buildCmd = "bun run build"
+		testCmd = "bun test"
+		lintCmd = "bun lint"
+		formatCmd = "bun format"
+		storybookCmd = "bun run storybook dev -p 6006"
+	}
+
 	fmt.Fprintf(&b, "# %s\n\n", title)
-	b.WriteString("Scaffolded with Go Sparky (Vite + React + TypeScript).\n\n")
+	b.WriteString("Scaffolded with Go Sparky (" + bundlerLabel + " + React + TypeScript).\n\n")
 
 	b.WriteString("## What's inside\n")
 	features := []string{
-		"Vite + React + TypeScript",
+		bundlerLabel + " + React + TypeScript",
 		"Framer Motion",
 	}
 	if p.Tailwind {
@@ -46,7 +72,7 @@ func Readme(p plan.Plan) string {
 		features = append(features, "Husky + lint-staged pre-commit")
 	}
 	if p.Storybook {
-		features = append(features, "Storybook (Vite + React config; starter story in src/stories)")
+		features = append(features, storybookNote)
 	}
 	if p.Docker {
 		features = append(features, "Dockerfile + docker-compose (dev/prod)")
@@ -65,29 +91,29 @@ func Readme(p plan.Plan) string {
 
 	b.WriteString("## Quickstart\n")
 	b.WriteString("```sh\n")
-	b.WriteString("pnpm dev\n")
+	b.WriteString(quickstartCmd + "\n")
 	b.WriteString("```\n\n")
-	b.WriteString("Then open http://localhost:5173\n\n")
+	b.WriteString("Then open http://localhost:" + devPort + "\n\n")
 
 	b.WriteString("## Scripts\n")
-	b.WriteString("- `pnpm dev` – start dev server\n")
-	b.WriteString("- `pnpm build` – production build\n")
-	b.WriteString("- `pnpm test` – run unit tests\n")
+	b.WriteString("- `" + quickstartCmd + "` – start dev server\n")
+	b.WriteString("- `" + buildCmd + "` – production build\n")
+	b.WriteString("- `" + testCmd + "` – run unit tests\n")
 	if p.Eslint {
-		b.WriteString("- `pnpm lint` – run ESLint\n")
+		b.WriteString("- `" + lintCmd + "` – run ESLint\n")
 	}
 	if p.Prettier {
-		b.WriteString("- `pnpm format` (optional) – run Prettier\n")
+		b.WriteString("- `" + formatCmd + "` (optional) – run Prettier\n")
 	}
 	if p.Storybook {
-		b.WriteString("- `pnpm storybook dev -p 6006` – run Storybook\n")
+		b.WriteString("- `" + storybookCmd + "` – run Storybook\n")
 	}
 	b.WriteString("\n")
 
 	if p.Mantine {
 		b.WriteString("## Mantine\n")
 		b.WriteString("- Styles imported in `src/App.tsx`\n")
-		b.WriteString("- MantineProvider set up in `src/main.tsx`\n\n")
+		b.WriteString("- MantineProvider set up in `" + entryFile + "`\n\n")
 	}
 
 	if p.Zustand {
@@ -98,13 +124,13 @@ func Readme(p plan.Plan) string {
 
 	if p.Tailwind {
 		b.WriteString("## Tailwind\n")
-		b.WriteString("- Configured via `@tailwindcss/vite`\n")
+		b.WriteString("- " + tailwindNote + "\n")
 		b.WriteString("- Styles in `src/index.css`\n\n")
 	}
 
 	if p.Docker {
 		b.WriteString("## Docker\n")
-		b.WriteString("- Dev: `docker compose up dev` (http://localhost:5173)\n")
+		b.WriteString("- Dev: `docker compose up dev` (http://localhost:" + devPort + ")\n")
 		b.WriteString("- Prod: `docker compose up prod` (http://localhost:4173)\n\n")
 	}
 

@@ -5,18 +5,20 @@ import (
 	"path/filepath"
 
 	"github.com/hotslug/go-sparky/internal/logger"
-	"github.com/hotslug/go-sparky/internal/runner"
+	"github.com/hotslug/go-sparky/internal/plan"
 )
 
-// InstallStorybook installs Storybook dev dependencies for Vite + React.
-func InstallStorybook() error {
+// InstallStorybook installs Storybook dev dependencies for the chosen bundler.
+func InstallStorybook(p plan.Plan) error {
 	spin := logger.StartSpinner("Installing Storybook")
-	if err := runner.RunQuiet(
-		"pnpm",
-		"install",
-		"-D",
+	framework := "@storybook/react"
+	if p.IsVite() {
+		framework = "@storybook/react-vite"
+	}
+
+	if err := addDependencies(p, true,
 		"storybook@latest",
-		"@storybook/react-vite@latest",
+		framework+"@latest",
 		"@storybook/addon-essentials@latest",
 		"@storybook/addon-interactions@latest",
 		"@storybook/blocks@latest",
@@ -32,12 +34,17 @@ func InstallStorybook() error {
 
 // WriteStorybookConfig writes .storybook config files and a starter story.
 // includeIndexCSS toggles importing src/index.css in preview.ts when it exists.
-func WriteStorybookConfig(includeIndexCSS bool) error {
+func WriteStorybookConfig(p plan.Plan, includeIndexCSS bool) error {
 	if err := os.MkdirAll(".storybook", 0o755); err != nil {
 		return err
 	}
 
-	mainContent := `import type { StorybookConfig } from "@storybook/react-vite";
+	frameworkName := "@storybook/react"
+	if p.IsVite() {
+		frameworkName = "@storybook/react-vite"
+	}
+
+	mainContent := `import type { StorybookConfig } from "` + frameworkName + `";
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
@@ -47,7 +54,7 @@ const config: StorybookConfig = {
     "@storybook/blocks",
   ],
   framework: {
-    name: "@storybook/react-vite",
+    name: "` + frameworkName + `",
     options: {},
   },
   docs: {

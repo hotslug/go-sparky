@@ -8,29 +8,40 @@ import (
 
 // MainTemplate builds main.tsx with conditional providers.
 func MainTemplate(p plan.Plan) string {
-	var imports []string
-
-	imports = append(imports,
-		"import React from 'react';",
-		"import ReactDOM from 'react-dom/client';",
-		"import App from './App';",
-		"import './index.css';",
-	)
+	var externalImports []string
+	var internalImports []string
 
 	if p.Mantine {
-		imports = append(imports, "import { MantineProvider } from '@mantine/core';")
+		externalImports = append(externalImports, "import { MantineProvider } from '@mantine/core';")
 	}
 
 	if p.ReactQuery {
-		imports = append(imports,
+		externalImports = append(externalImports,
 			"import { QueryClient, QueryClientProvider } from '@tanstack/react-query';",
 			"import { ReactQueryDevtools } from '@tanstack/react-query-devtools';",
 		)
 	}
 
+	externalImports = append(externalImports,
+		"import React from 'react';",
+		"import ReactDOM from 'react-dom/client';",
+	)
+
+	internalImports = append(internalImports,
+		"import App from './App';",
+		"import './index.css';",
+	)
+
 	var b strings.Builder
 
-	for _, line := range imports {
+	for _, line := range externalImports {
+		b.WriteString(line)
+		b.WriteString("\n")
+	}
+
+	b.WriteString("\n")
+
+	for _, line := range internalImports {
 		b.WriteString(line)
 		b.WriteString("\n")
 	}

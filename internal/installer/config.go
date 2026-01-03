@@ -2,6 +2,8 @@ package installer
 
 import (
 	"os"
+
+	"github.com/hotslug/go-sparky/internal/plan"
 )
 
 const postcssConfigContent = `module.exports = {
@@ -54,6 +56,15 @@ export default defineConfig({
 `
 
 	return os.WriteFile("vite.config.ts", []byte(content), 0o644)
+}
+
+// WriteConfigFiles writes bundler-specific config files.
+func WriteConfigFiles(p plan.Plan) error {
+	if p.IsVite() {
+		return WriteViteConfig(p.Tailwind)
+	}
+
+	return nil
 }
 
 // WritePostCSSConfig writes postcss.config.cjs with a lightweight Mantine preset.

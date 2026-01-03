@@ -5,13 +5,13 @@ import (
 	"os"
 
 	"github.com/hotslug/go-sparky/internal/logger"
-	"github.com/hotslug/go-sparky/internal/runner"
+	"github.com/hotslug/go-sparky/internal/plan"
 )
 
 // InstallBulma installs Bulma CSS.
-func InstallBulma() error {
+func InstallBulma(p plan.Plan) error {
 	spin := logger.StartSpinner("Installing Bulma")
-	if err := runner.RunQuiet("pnpm", "install", "bulma@latest"); err != nil {
+	if err := addDependencies(p, false, "bulma@latest"); err != nil {
 		spin("Failed to install Bulma")
 		return err
 	}
@@ -20,9 +20,9 @@ func InstallBulma() error {
 }
 
 // RemoveBulma uninstalls Bulma CSS.
-func RemoveBulma() error {
+func RemoveBulma(p plan.Plan) error {
 	spin := logger.StartSpinner("Removing Bulma")
-	if err := runner.RunQuiet("pnpm", "remove", "bulma"); err != nil {
+	if err := removeDependencies(p, false, "bulma"); err != nil {
 		spin("Failed to remove Bulma")
 		return err
 	}

@@ -4,14 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 
 	"github.com/hotslug/go-sparky/internal/installer"
 	"github.com/hotslug/go-sparky/internal/logger"
-	"github.com/hotslug/go-sparky/internal/plan"
 	"github.com/hotslug/go-sparky/internal/runner"
-	"github.com/hotslug/go-sparky/internal/version"
 	"github.com/spf13/cobra"
 )
 
@@ -48,11 +45,8 @@ func newAddMantineCmd() *cobra.Command {
 				return fmt.Errorf("--styled is only available during scaffolding (go-sparky new --mantine --styled). The add command intentionally leaves src/App.tsx alone so you can keep your existing UI.")
 			}
 
-			if _, err := exec.LookPath("pnpm"); err != nil {
-				return fmt.Errorf("pnpm not found: %w", err)
-			}
-
-			if err := version.CheckNodeVersion(); err != nil {
+			p, err := detectBundlerPlan()
+			if err != nil {
 				return err
 			}
 
@@ -63,16 +57,17 @@ func newAddMantineCmd() *cobra.Command {
 				return err
 			}
 
-			mainPath := filepath.Join("src", "main.tsx")
+			mainPath := filepath.Join("src", mainEntryFilename(p))
 			mainContent, err := os.ReadFile(mainPath)
 			if err != nil {
 				if os.IsNotExist(err) {
-					return fmt.Errorf("src/main.tsx not found. Run this in a Vite React project")
+					return fmt.Errorf("%s not found. Run this in a go-sparky project", mainPath)
 				}
 				return err
 			}
 
-			if err := installer.InstallMantine(); err != nil {
+			p.Mantine = true
+			if err := installer.InstallMantine(p); err != nil {
 				return err
 			}
 
@@ -86,12 +81,9 @@ func newAddMantineCmd() *cobra.Command {
 				return nil
 			}
 
-			p := plan.Plan{
-				Mantine:    true,
-				ReactQuery: installer.HasReactQueryDependency(),
-			}
+			p.ReactQuery = installer.HasReactQueryDependency()
 
-			if err := installer.WriteMainFile(p); err != nil {
+			if err := installer.WriteMainFile(p, mainEntryFilename(p)); err != nil {
 				return err
 			}
 
@@ -112,11 +104,8 @@ func newAddReactQueryCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.PrintBanner()
 
-			if _, err := exec.LookPath("pnpm"); err != nil {
-				return fmt.Errorf("pnpm not found: %w", err)
-			}
-
-			if err := version.CheckNodeVersion(); err != nil {
+			p, err := detectBundlerPlan()
+			if err != nil {
 				return err
 			}
 
@@ -127,16 +116,17 @@ func newAddReactQueryCmd() *cobra.Command {
 				return err
 			}
 
-			mainPath := filepath.Join("src", "main.tsx")
+			mainPath := filepath.Join("src", mainEntryFilename(p))
 			mainContent, err := os.ReadFile(mainPath)
 			if err != nil {
 				if os.IsNotExist(err) {
-					return fmt.Errorf("src/main.tsx not found. Run this in a Vite React project")
+					return fmt.Errorf("%s not found. Run this in a go-sparky project", mainPath)
 				}
 				return err
 			}
 
-			if err := installer.InstallReactQuery(); err != nil {
+			p.ReactQuery = true
+			if err := installer.InstallReactQuery(p); err != nil {
 				return err
 			}
 
@@ -146,12 +136,9 @@ func newAddReactQueryCmd() *cobra.Command {
 				return nil
 			}
 
-			p := plan.Plan{
-				ReactQuery: true,
-				Mantine:    installer.HasMantineDependency(),
-			}
+			p.Mantine = installer.HasMantineDependency()
 
-			if err := installer.WriteMainFile(p); err != nil {
+			if err := installer.WriteMainFile(p, mainEntryFilename(p)); err != nil {
 				return err
 			}
 
@@ -169,11 +156,8 @@ func newAddZustandCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.PrintBanner()
 
-			if _, err := exec.LookPath("pnpm"); err != nil {
-				return fmt.Errorf("pnpm not found: %w", err)
-			}
-
-			if err := version.CheckNodeVersion(); err != nil {
+			p, err := detectBundlerPlan()
+			if err != nil {
 				return err
 			}
 
@@ -184,7 +168,8 @@ func newAddZustandCmd() *cobra.Command {
 				return err
 			}
 
-			if err := installer.InstallZustand(); err != nil {
+			p.Zustand = true
+			if err := installer.InstallZustand(p); err != nil {
 				return err
 			}
 
@@ -212,7 +197,12 @@ func newAddDockerCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.PrintBanner()
 
-			if err := installer.WriteDockerArtifacts(); err != nil {
+			p, err := detectBundlerPlan()
+			if err != nil {
+				return err
+			}
+
+			if err := installer.WriteDockerArtifacts(p); err != nil {
 				return err
 			}
 
@@ -230,7 +220,12 @@ func newAddVercelCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.PrintBanner()
 
-			if err := installer.WriteVercelConfig(); err != nil {
+			p, err := detectBundlerPlan()
+			if err != nil {
+				return err
+			}
+
+			if err := installer.WriteVercelConfig(p); err != nil {
 				return err
 			}
 
@@ -248,7 +243,12 @@ func newAddNetlifyCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.PrintBanner()
 
-			if err := installer.WriteNetlifyConfig(); err != nil {
+			p, err := detectBundlerPlan()
+			if err != nil {
+				return err
+			}
+
+			if err := installer.WriteNetlifyConfig(p); err != nil {
 				return err
 			}
 
@@ -266,11 +266,8 @@ func newAddFramerMotionCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.PrintBanner()
 
-			if _, err := exec.LookPath("pnpm"); err != nil {
-				return fmt.Errorf("pnpm not found: %w", err)
-			}
-
-			if err := version.CheckNodeVersion(); err != nil {
+			p, err := detectBundlerPlan()
+			if err != nil {
 				return err
 			}
 
@@ -281,7 +278,8 @@ func newAddFramerMotionCmd() *cobra.Command {
 				return err
 			}
 
-			if err := installer.InstallFramerMotion(); err != nil {
+			p.Framer = true
+			if err := installer.InstallFramerMotion(p); err != nil {
 				return err
 			}
 
@@ -294,16 +292,13 @@ func newAddFramerMotionCmd() *cobra.Command {
 func newAddStorybookCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "storybook",
-		Short: "Install Storybook with Vite + React defaults",
+		Short: "Install Storybook config and dependencies",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.PrintBanner()
 
-			if _, err := exec.LookPath("pnpm"); err != nil {
-				return fmt.Errorf("pnpm not found: %w", err)
-			}
-
-			if err := version.CheckNodeVersion(); err != nil {
+			p, err := detectBundlerPlan()
+			if err != nil {
 				return err
 			}
 
@@ -316,7 +311,7 @@ func newAddStorybookCmd() *cobra.Command {
 
 			if installer.HasStorybookConfig() {
 				logger.Warning("\n.storybook already exists; leaving your Storybook config unchanged.")
-				logger.Info("\nStart it with `pnpm storybook dev -p 6006` or update your existing config manually.")
+				logger.Info("\nStart it with `" + storybookCommand(p) + "` or update your existing config manually.")
 				return nil
 			}
 
@@ -329,11 +324,12 @@ func newAddStorybookCmd() *cobra.Command {
 				}
 			}
 
-			if err := installer.InstallStorybook(); err != nil {
+			p.Storybook = true
+			if err := installer.InstallStorybook(p); err != nil {
 				return err
 			}
 
-			if err := installer.WriteStorybookConfig(indexCSSExists); err != nil {
+			if err := installer.WriteStorybookConfig(p, indexCSSExists); err != nil {
 				return err
 			}
 
@@ -341,7 +337,7 @@ func newAddStorybookCmd() *cobra.Command {
 				logger.Warning("\nsrc/index.css not found; update .storybook/preview.ts to import your global styles if needed.")
 			}
 
-			logger.Info("\nStorybook added. Start it with `pnpm storybook dev -p 6006`.")
+			logger.Info("\nStorybook added. Start it with `" + storybookCommand(p) + "`.")
 			return nil
 		},
 	}
@@ -365,11 +361,8 @@ func newAddShadcnCmd() *cobra.Command {
 				}
 			}
 
-			if _, err := exec.LookPath("pnpm"); err != nil {
-				return fmt.Errorf("pnpm not found: %w", err)
-			}
-
-			if err := version.CheckNodeVersion(); err != nil {
+			p, err := detectBundlerPlan()
+			if err != nil {
 				return err
 			}
 
@@ -386,22 +379,39 @@ func newAddShadcnCmd() *cobra.Command {
 
 			if _, err := os.Stat("components.json"); err == nil {
 				logger.Warning("\ncomponents.json already exists; shadcn/ui looks initialized. Skipping init.")
-				logger.Info("\nUse `pnpm dlx shadcn-ui@latest add <component>` to add components.")
+				if p.IsBun() {
+					logger.Info("\nUse `bun run shadcn-ui add <component>` to add components.")
+				} else {
+					logger.Info("\nUse `pnpm dlx shadcn-ui@latest add <component>` to add components.")
+				}
 				return nil
 			} else if err != nil && !os.IsNotExist(err) {
 				return err
 			}
 
 			logger.Info("\nRunning shadcn-ui init (you'll see prompts for theme/config)...")
-			if err := runner.Run("pnpm", "dlx", "shadcn-ui@latest", "init"); err != nil {
-				return err
+			if p.IsBun() {
+				if err := runner.Run("bun", "add", "-d", "shadcn-ui@latest"); err != nil {
+					return err
+				}
+				if err := runner.Run("bun", "run", "shadcn-ui", "init"); err != nil {
+					return err
+				}
+			} else {
+				if err := runner.Run("pnpm", "dlx", "shadcn-ui@latest", "init"); err != nil {
+					return err
+				}
 			}
 
 			if !indexExists {
-				logger.Warning("\nshadcn-ui initialized, but src/index.css was not found; ensure your Tailwind entry CSS exists and is wired in your Vite project.")
+				logger.Warning("\nshadcn-ui initialized, but src/index.css was not found; ensure your Tailwind entry CSS exists and is wired in your project.")
 			}
 
-			logger.Info("\nshadcn-ui initialized. Add components with `pnpm dlx shadcn-ui@latest add button card input ...`")
+			if p.IsBun() {
+				logger.Info("\nshadcn-ui initialized. Add components with `bun run shadcn-ui add button card input ...`")
+			} else {
+				logger.Info("\nshadcn-ui initialized. Add components with `pnpm dlx shadcn-ui@latest add button card input ...`")
+			}
 			return nil
 		},
 	}
@@ -425,11 +435,8 @@ func newAddBulmaCmd() *cobra.Command {
 				}
 			}
 
-			if _, err := exec.LookPath("pnpm"); err != nil {
-				return fmt.Errorf("pnpm not found: %w", err)
-			}
-
-			if err := version.CheckNodeVersion(); err != nil {
+			p, err := detectBundlerPlan()
+			if err != nil {
 				return err
 			}
 
@@ -440,7 +447,7 @@ func newAddBulmaCmd() *cobra.Command {
 				return err
 			}
 
-			if err := installer.InstallBulma(); err != nil {
+			if err := installer.InstallBulma(p); err != nil {
 				return err
 			}
 

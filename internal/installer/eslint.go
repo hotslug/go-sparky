@@ -4,14 +4,14 @@ import (
 	"os"
 
 	"github.com/hotslug/go-sparky/internal/logger"
-	"github.com/hotslug/go-sparky/internal/runner"
+	"github.com/hotslug/go-sparky/internal/plan"
 	"github.com/hotslug/go-sparky/internal/templates"
 )
 
 // InstallESLint installs ESLint dependencies and config.
-func InstallESLint() error {
+func InstallESLint(p plan.Plan) error {
 	spin := logger.StartSpinner("Installing ESLint")
-	if err := runner.RunQuiet("pnpm", "install", "-D",
+	if err := addDependencies(p, true,
 		"eslint@latest",
 		"@eslint/js@latest",
 		"@typescript-eslint/parser@latest",
@@ -31,15 +31,15 @@ func InstallESLint() error {
 	}
 	spin("Installed ESLint")
 
-	return os.WriteFile("eslint.config.js", []byte(templates.EslintConfig()), 0o644)
+	return os.WriteFile("eslint.config.js", []byte(templates.EslintConfig(p)), 0o644)
 }
 
 // WriteESLintStrict rewrites eslint.config.js with the default strict config.
-func WriteESLintStrict() error {
-	return os.WriteFile("eslint.config.js", []byte(templates.EslintConfig()), 0o644)
+func WriteESLintStrict(p plan.Plan) error {
+	return os.WriteFile("eslint.config.js", []byte(templates.EslintConfig(p)), 0o644)
 }
 
 // WriteESLintRelaxed rewrites eslint.config.js with a looser preset.
-func WriteESLintRelaxed() error {
-	return os.WriteFile("eslint.config.js", []byte(templates.EslintConfigRelaxed()), 0o644)
+func WriteESLintRelaxed(p plan.Plan) error {
+	return os.WriteFile("eslint.config.js", []byte(templates.EslintConfigRelaxed(p)), 0o644)
 }

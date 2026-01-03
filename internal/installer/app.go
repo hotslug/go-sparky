@@ -14,7 +14,12 @@ func WriteAppFiles(p plan.Plan) error {
 		return err
 	}
 
-	if err := WriteMainFile(p); err != nil {
+	mainFilename := "main.tsx"
+	if p.IsBun() {
+		mainFilename = "frontend.tsx"
+	}
+
+	if err := WriteMainFile(p, mainFilename); err != nil {
 		return err
 	}
 
@@ -41,6 +46,12 @@ func WriteAppFiles(p plan.Plan) error {
 		return err
 	}
 
+	if p.IsBun() {
+		if err := os.WriteFile(filepath.Join("src", "index.html"), []byte(templates.BunIndexHTML()), 0o644); err != nil {
+			return err
+		}
+	}
+
 	return os.WriteFile(filepath.Join(".", "README.md"), []byte(templates.Readme(p)), 0o644)
 }
 
@@ -49,9 +60,9 @@ func WriteAppFile(p plan.Plan) error {
 	return os.WriteFile(filepath.Join("src", "App.tsx"), []byte(templates.AppTemplate(p)), 0o644)
 }
 
-// WriteMainFile writes the main.tsx template based on the plan.
-func WriteMainFile(p plan.Plan) error {
-	return os.WriteFile(filepath.Join("src", "main.tsx"), []byte(templates.MainTemplate(p)), 0o644)
+// WriteMainFile writes the main entry template based on the plan.
+func WriteMainFile(p plan.Plan, filename string) error {
+	return os.WriteFile(filepath.Join("src", filename), []byte(templates.MainTemplate(p)), 0o644)
 }
 
 const baseIndexCSS = `@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');

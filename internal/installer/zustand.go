@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/hotslug/go-sparky/internal/logger"
-	"github.com/hotslug/go-sparky/internal/runner"
+	"github.com/hotslug/go-sparky/internal/plan"
 )
 
 const zustandStorePath = "src/stores/useSparkyStore.ts"
@@ -51,9 +51,9 @@ export const useSparkyStore = create<SparkyStore>((set) => ({
 `
 
 // InstallZustand installs Zustand dependency.
-func InstallZustand() error {
+func InstallZustand(p plan.Plan) error {
 	spin := logger.StartSpinner("Installing Zustand")
-	if err := runner.RunQuiet("pnpm", "install", "zustand@latest"); err != nil {
+	if err := addDependencies(p, false, "zustand@latest"); err != nil {
 		spin("Failed to install Zustand")
 		return err
 	}
@@ -62,9 +62,9 @@ func InstallZustand() error {
 }
 
 // RemoveZustand uninstalls Zustand.
-func RemoveZustand() error {
+func RemoveZustand(p plan.Plan) error {
 	spin := logger.StartSpinner("Removing Zustand")
-	if err := runner.RunQuiet("pnpm", "remove", "zustand"); err != nil {
+	if err := removeDependencies(p, false, "zustand"); err != nil {
 		spin("Failed to remove Zustand")
 		return err
 	}

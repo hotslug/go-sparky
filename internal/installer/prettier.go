@@ -4,14 +4,14 @@ import (
 	"os"
 
 	"github.com/hotslug/go-sparky/internal/logger"
-	"github.com/hotslug/go-sparky/internal/runner"
+	"github.com/hotslug/go-sparky/internal/plan"
 	"github.com/hotslug/go-sparky/internal/templates"
 )
 
 // InstallPrettier installs Prettier and writes the config file.
-func InstallPrettier() error {
+func InstallPrettier(p plan.Plan) error {
 	spin := logger.StartSpinner("Installing Prettier")
-	if err := runner.RunQuiet("pnpm", "install", "-D",
+	if err := addDependencies(p, true,
 		"prettier@latest",
 		"prettier-plugin-tailwindcss@latest",
 		"@ianvs/prettier-plugin-sort-imports@latest",

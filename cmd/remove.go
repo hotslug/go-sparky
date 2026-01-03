@@ -4,14 +4,12 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 
 	"github.com/hotslug/go-sparky/internal/installer"
 	"github.com/hotslug/go-sparky/internal/logger"
 	"github.com/hotslug/go-sparky/internal/plan"
 	"github.com/hotslug/go-sparky/internal/templates"
-	"github.com/hotslug/go-sparky/internal/version"
 	"github.com/spf13/cobra"
 )
 
@@ -40,11 +38,8 @@ func newRemoveMantineCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.PrintBanner()
 
-			if _, err := exec.LookPath("pnpm"); err != nil {
-				return fmt.Errorf("pnpm not found: %w", err)
-			}
-
-			if err := version.CheckNodeVersion(); err != nil {
+			p, err := detectBundlerPlan()
+			if err != nil {
 				return err
 			}
 
@@ -55,16 +50,16 @@ func newRemoveMantineCmd() *cobra.Command {
 				return err
 			}
 
-			mainPath := filepath.Join("src", "main.tsx")
+			mainPath := filepath.Join("src", mainEntryFilename(p))
 			mainContent, err := os.ReadFile(mainPath)
 			if err != nil {
 				if os.IsNotExist(err) {
-					return fmt.Errorf("src/main.tsx not found. Run this in a Vite React project")
+					return fmt.Errorf("%s not found. Run this in a go-sparky project", mainPath)
 				}
 				return err
 			}
 
-			if err := installer.RemoveMantine(); err != nil {
+			if err := installer.RemoveMantine(p); err != nil {
 				return err
 			}
 
@@ -78,11 +73,9 @@ func newRemoveMantineCmd() *cobra.Command {
 				return nil
 			}
 
-			p := plan.Plan{
-				ReactQuery: installer.HasReactQueryDependency(),
-			}
+			p.ReactQuery = installer.HasReactQueryDependency()
 
-			if err := installer.WriteMainFile(p); err != nil {
+			if err := installer.WriteMainFile(p, mainEntryFilename(p)); err != nil {
 				return err
 			}
 
@@ -100,11 +93,8 @@ func newRemoveReactQueryCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.PrintBanner()
 
-			if _, err := exec.LookPath("pnpm"); err != nil {
-				return fmt.Errorf("pnpm not found: %w", err)
-			}
-
-			if err := version.CheckNodeVersion(); err != nil {
+			p, err := detectBundlerPlan()
+			if err != nil {
 				return err
 			}
 
@@ -115,16 +105,16 @@ func newRemoveReactQueryCmd() *cobra.Command {
 				return err
 			}
 
-			mainPath := filepath.Join("src", "main.tsx")
+			mainPath := filepath.Join("src", mainEntryFilename(p))
 			mainContent, err := os.ReadFile(mainPath)
 			if err != nil {
 				if os.IsNotExist(err) {
-					return fmt.Errorf("src/main.tsx not found. Run this in a Vite React project")
+					return fmt.Errorf("%s not found. Run this in a go-sparky project", mainPath)
 				}
 				return err
 			}
 
-			if err := installer.RemoveReactQuery(); err != nil {
+			if err := installer.RemoveReactQuery(p); err != nil {
 				return err
 			}
 
@@ -134,11 +124,9 @@ func newRemoveReactQueryCmd() *cobra.Command {
 				return nil
 			}
 
-			p := plan.Plan{
-				Mantine: installer.HasMantineDependency(),
-			}
+			p.Mantine = installer.HasMantineDependency()
 
-			if err := installer.WriteMainFile(p); err != nil {
+			if err := installer.WriteMainFile(p, mainEntryFilename(p)); err != nil {
 				return err
 			}
 
@@ -156,11 +144,8 @@ func newRemoveZustandCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.PrintBanner()
 
-			if _, err := exec.LookPath("pnpm"); err != nil {
-				return fmt.Errorf("pnpm not found: %w", err)
-			}
-
-			if err := version.CheckNodeVersion(); err != nil {
+			p, err := detectBundlerPlan()
+			if err != nil {
 				return err
 			}
 
@@ -175,7 +160,7 @@ func newRemoveZustandCmd() *cobra.Command {
 			appContent, err := os.ReadFile(appPath)
 			if err != nil {
 				if os.IsNotExist(err) {
-					return fmt.Errorf("src/App.tsx not found. Run this in a Vite React project")
+					return fmt.Errorf("src/App.tsx not found. Run this in a go-sparky project")
 				}
 				return err
 			}
@@ -183,7 +168,7 @@ func newRemoveZustandCmd() *cobra.Command {
 			appMatchesGenerated := string(appContent) == templates.AppTemplate(plan.Plan{Zustand: true})
 			appUsesStore := bytes.Contains(appContent, []byte("useSparkyStore"))
 
-			if err := installer.RemoveZustand(); err != nil {
+			if err := installer.RemoveZustand(p); err != nil {
 				return err
 			}
 
@@ -272,11 +257,8 @@ func newRemoveFramerMotionCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.PrintBanner()
 
-			if _, err := exec.LookPath("pnpm"); err != nil {
-				return fmt.Errorf("pnpm not found: %w", err)
-			}
-
-			if err := version.CheckNodeVersion(); err != nil {
+			p, err := detectBundlerPlan()
+			if err != nil {
 				return err
 			}
 
@@ -287,7 +269,7 @@ func newRemoveFramerMotionCmd() *cobra.Command {
 				return err
 			}
 
-			if err := installer.RemoveFramerMotion(); err != nil {
+			if err := installer.RemoveFramerMotion(p); err != nil {
 				return err
 			}
 
@@ -305,11 +287,8 @@ func newRemoveBulmaCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.PrintBanner()
 
-			if _, err := exec.LookPath("pnpm"); err != nil {
-				return fmt.Errorf("pnpm not found: %w", err)
-			}
-
-			if err := version.CheckNodeVersion(); err != nil {
+			p, err := detectBundlerPlan()
+			if err != nil {
 				return err
 			}
 
@@ -320,7 +299,7 @@ func newRemoveBulmaCmd() *cobra.Command {
 				return err
 			}
 
-			if err := installer.RemoveBulma(); err != nil {
+			if err := installer.RemoveBulma(p); err != nil {
 				return err
 			}
 

@@ -2,7 +2,7 @@ package cmd
 
 import "github.com/spf13/cobra"
 
-const appVersion = "0.1.0"
+const appVersion = "0.2.0"
 
 func newVersionCmd() *cobra.Command {
 	return &cobra.Command{

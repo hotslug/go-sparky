@@ -10,7 +10,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:           "go-sparky",
-	Short:         "Scaffold a modern React app with Vite",
+	Short:         "Scaffold a modern React app with Vite or Bun",
 	SilenceErrors: true,
 }
 
@@ -34,5 +34,8 @@ func init() {
 	rootCmd.AddCommand(newAddCmd())
 	rootCmd.AddCommand(newRemoveCmd())
 	rootCmd.AddCommand(newNewCmd())
+	rootCmd.AddCommand(newViteSetupCmd())
+	rootCmd.AddCommand(newBunSetupCmd())
+	rootCmd.AddCommand(newBunSetupAliasCmd())
 	rootCmd.AddCommand(newVersionCmd())
 }

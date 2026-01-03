@@ -14,7 +14,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newNewCmd() *cobra.Command {
+func newViteSetupCmd() *cobra.Command {
 	var (
 		flagMantine      bool
 		flagNoTailwind   bool
@@ -32,7 +32,7 @@ func newNewCmd() *cobra.Command {
 	)
 
 	cmd := &cobra.Command{
-		Use:   "new [name]",
+		Use:   "vite-setup [name]",
 		Short: "Create a new React app powered by Vite",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -46,6 +46,7 @@ func newNewCmd() *cobra.Command {
 
 			p := plan.Plan{
 				Name:       projectName,
+				Bundler:    plan.BundlerVite,
 				Mantine:    flagMantine,
 				Tailwind:   !flagNoTailwind,
 				ReactQuery: !flagNoReactQuery,
@@ -93,66 +94,66 @@ func newNewCmd() *cobra.Command {
 			}
 			spin("Scaffolded Vite project")
 
-			if err := installer.InstallViteReactPlugin(); err != nil {
+			if err := installer.InstallViteReactPlugin(p); err != nil {
 				return err
 			}
 
 			if p.Mantine {
-				if err := installer.InstallMantine(); err != nil {
+				if err := installer.InstallMantine(p); err != nil {
 					return err
 				}
 			}
 
 			if p.Framer {
-				if err := installer.InstallFramerMotion(); err != nil {
+				if err := installer.InstallFramerMotion(p); err != nil {
 					return err
 				}
 			}
 
 			if p.Tailwind {
-				if err := installer.InstallTailwind(); err != nil {
+				if err := installer.InstallTailwind(p); err != nil {
 					return err
 				}
 			}
 
 			if p.ReactQuery {
-				if err := installer.InstallReactQuery(); err != nil {
+				if err := installer.InstallReactQuery(p); err != nil {
 					return err
 				}
 			}
 
 			if p.Zustand {
-				if err := installer.InstallZustand(); err != nil {
+				if err := installer.InstallZustand(p); err != nil {
 					return err
 				}
 			}
 
 			if p.Eslint {
-				if err := installer.InstallESLint(); err != nil {
+				if err := installer.InstallESLint(p); err != nil {
 					return err
 				}
 			}
 
 			if p.Prettier {
-				if err := installer.InstallPrettier(); err != nil {
+				if err := installer.InstallPrettier(p); err != nil {
 					return err
 				}
 			}
 
 			if p.Husky {
-				if err := installer.InstallHusky(); err != nil {
+				if err := installer.InstallHusky(p); err != nil {
 					return err
 				}
 			}
 
 			if p.Storybook {
-				if err := installer.InstallStorybook(); err != nil {
+				if err := installer.InstallStorybook(p); err != nil {
 					return err
 				}
 			}
 
 			spin = logger.StartSpinner("Finalizing templates")
-			if err := installer.WriteViteConfig(p.Tailwind); err != nil {
+			if err := installer.WriteConfigFiles(p); err != nil {
 				spin("Failed to finalize templates")
 				return err
 			}
@@ -170,7 +171,7 @@ func newNewCmd() *cobra.Command {
 			}
 
 			if p.Storybook {
-				if err := installer.WriteStorybookConfig(true); err != nil {
+				if err := installer.WriteStorybookConfig(p, true); err != nil {
 					spin("Failed to finalize templates")
 					return err
 				}
@@ -178,25 +179,25 @@ func newNewCmd() *cobra.Command {
 			spin("Templates ready")
 
 			if p.Docker {
-				if err := installer.WriteDockerArtifacts(); err != nil {
+				if err := installer.WriteDockerArtifacts(p); err != nil {
 					return err
 				}
 			}
 
 			if p.Vercel {
-				if err := installer.WriteVercelConfig(); err != nil {
+				if err := installer.WriteVercelConfig(p); err != nil {
 					return err
 				}
 			}
 
 			if p.Netlify {
-				if err := installer.WriteNetlifyConfig(); err != nil {
+				if err := installer.WriteNetlifyConfig(p); err != nil {
 					return err
 				}
 			}
 
 			spin = logger.StartSpinner("Installing dependencies")
-			if err := runner.RunQuiet("pnpm", "install"); err != nil {
+			if err := runner.RunQuiet(p.PackageManager(), "install"); err != nil {
 				spin("Failed to install dependencies")
 				return err
 			}
@@ -206,10 +207,10 @@ func newNewCmd() *cobra.Command {
 				return err
 			}
 
-			logger.Info("\n⚡ Go Sparky!\n\n→ cd " + projectName + "\n→ pnpm dev\n\n⚡ Edit src/App.tsx to begin")
+			logger.Info("\n⚡ Go Sparky!\n\n→ cd " + projectName + "\n→ " + p.PackageManager() + " dev\n\n⚡ Edit src/App.tsx to begin")
 
 			logger.Info("\nStarting dev server (press Ctrl+C to stop)...")
-			if err := runner.Run("pnpm", "dev"); err != nil {
+			if err := runner.Run(p.PackageManager(), "dev"); err != nil {
 				return err
 			}
 			return nil
@@ -229,6 +230,24 @@ func newNewCmd() *cobra.Command {
 	cmd.Flags().BoolVar(&flagVercel, "vercel", false, "Add Vercel static build config")
 	cmd.Flags().BoolVar(&flagNetlify, "netlify", false, "Add Netlify deploy config")
 	cmd.Flags().BoolVar(&flagStorybook, "storybook", false, "Add Storybook config and dependencies")
+
+	return cmd
+}
+
+func newNewCmd() *cobra.Command {
+	cmd := newViteSetupCmd()
+	cmd.Use = "new [name]"
+	cmd.Short = "Deprecated: use vite-setup to create a Vite project"
+	cmd.Deprecated = "use vite-setup instead"
+
+	run := cmd.RunE
+	cmd.RunE = func(cmd *cobra.Command, args []string) error {
+		logger.Warning("`new` is deprecated; use `vite-setup` instead.")
+		if run != nil {
+			return run(cmd, args)
+		}
+		return nil
+	}
 
 	return cmd
 }

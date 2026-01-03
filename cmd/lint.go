@@ -6,6 +6,7 @@ import (
 
 	"github.com/hotslug/go-sparky/internal/installer"
 	"github.com/hotslug/go-sparky/internal/logger"
+	"github.com/hotslug/go-sparky/internal/plan"
 	"github.com/spf13/cobra"
 )
 
@@ -35,7 +36,12 @@ func newLintRelaxCmd() *cobra.Command {
 				return err
 			}
 
-			if err := installer.WriteESLintRelaxed(); err != nil {
+			bundler, err := installer.DetectBundler()
+			if err != nil {
+				return err
+			}
+
+			if err := installer.WriteESLintRelaxed(plan.Plan{Bundler: bundler}); err != nil {
 				return err
 			}
 
@@ -53,7 +59,12 @@ func newLintResetCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.PrintBanner()
 
-			if err := installer.WriteESLintStrict(); err != nil {
+			bundler, err := installer.DetectBundler()
+			if err != nil {
+				return err
+			}
+
+			if err := installer.WriteESLintStrict(plan.Plan{Bundler: bundler}); err != nil {
 				return err
 			}
 

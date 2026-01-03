@@ -2,13 +2,13 @@ package installer
 
 import (
 	"github.com/hotslug/go-sparky/internal/logger"
-	"github.com/hotslug/go-sparky/internal/runner"
+	"github.com/hotslug/go-sparky/internal/plan"
 )
 
 // InstallReactQuery installs TanStack Query dependencies.
-func InstallReactQuery() error {
+func InstallReactQuery(p plan.Plan) error {
 	spin := logger.StartSpinner("Installing TanStack Query")
-	if err := runner.RunQuiet("pnpm", "install", "@tanstack/react-query@latest", "@tanstack/react-query-devtools@latest"); err != nil {
+	if err := addDependencies(p, false, "@tanstack/react-query@latest", "@tanstack/react-query-devtools@latest"); err != nil {
 		spin("Failed to install TanStack Query")
 		return err
 	}

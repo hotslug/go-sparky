@@ -1,7 +1,56 @@
 package templates
 
+import (
+	"strings"
+
+	"github.com/hotslug/go-sparky/internal/plan"
+)
+
 // EslintConfig returns the eslint.config.js template.
-func EslintConfig() string {
+func EslintConfig(p plan.Plan) string {
+	ignores := []string{
+		`"dist"`,
+		`"node_modules"`,
+		`"eslint.config.ts"`,
+		`"eslint.config.js"`,
+	}
+
+	if p.IsVite() {
+		ignores = append(ignores, `"vite.config.ts"`, `"vite.config.js"`)
+	}
+
+	if p.IsBun() {
+		ignores = append(ignores, `"bun-env.d.ts"`)
+	}
+
+	ignoreBlock := strings.Join(ignores, ",\n      ")
+
+	globalsExtra := ""
+	if p.IsBun() {
+		globalsExtra = "        ...globals.node,\n"
+	}
+
+	tailEntries := []string{
+		"  configPrettier",
+	}
+	if p.IsBun() {
+		tailEntries = append(tailEntries, `  {
+    files: ["src/index.ts"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": "off",
+    },
+  }`,
+			`  {
+    files: ["src/frontend.tsx"],
+    rules: {
+      "import/order": "off",
+      "import/newline-after-import": "off",
+    },
+  }`)
+	}
+
+	tailBlock := strings.Join(tailEntries, ",\n")
+
 	return `import js from "@eslint/js";
 import globals from "globals";
 import tsParser from "@typescript-eslint/parser";
@@ -18,12 +67,7 @@ import configPrettier from "eslint-config-prettier";
 export default [
   {
     ignores: [
-      "dist",
-      "node_modules",
-      "eslint.config.ts",
-      "eslint.config.js",
-      "vite.config.ts",
-      "vite.config.js",
+      ` + ignoreBlock + `,
     ],
   },
   js.configs.recommended,
@@ -42,7 +86,7 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.es2020,
-      },
+` + globalsExtra + `      },
     },
     plugins: {
       "@typescript-eslint": tsPlugin,
@@ -90,13 +134,56 @@ export default [
       },
     },
   },
-  configPrettier,
+` + tailBlock + `
 ];
 `
 }
 
 // EslintConfigRelaxed returns a softer eslint.config.js template (no unicorn, import rules relaxed).
-func EslintConfigRelaxed() string {
+func EslintConfigRelaxed(p plan.Plan) string {
+	ignores := []string{
+		`"dist"`,
+		`"node_modules"`,
+		`"eslint.config.ts"`,
+		`"eslint.config.js"`,
+	}
+
+	if p.IsVite() {
+		ignores = append(ignores, `"vite.config.ts"`, `"vite.config.js"`)
+	}
+
+	if p.IsBun() {
+		ignores = append(ignores, `"bun-env.d.ts"`)
+	}
+
+	ignoreBlock := strings.Join(ignores, ",\n      ")
+
+	globalsExtra := ""
+	if p.IsBun() {
+		globalsExtra = "        ...globals.node,\n"
+	}
+
+	tailEntries := []string{
+		"  configPrettier",
+	}
+	if p.IsBun() {
+		tailEntries = append(tailEntries, `  {
+    files: ["src/index.ts"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": "off",
+    },
+  }`,
+			`  {
+    files: ["src/frontend.tsx"],
+    rules: {
+      "import/order": "off",
+      "import/newline-after-import": "off",
+    },
+  }`)
+	}
+
+	tailBlock := strings.Join(tailEntries, ",\n")
+
 	return `import js from "@eslint/js";
 import globals from "globals";
 import tsParser from "@typescript-eslint/parser";
@@ -111,12 +198,7 @@ import configPrettier from "eslint-config-prettier";
 export default [
   {
     ignores: [
-      "dist",
-      "node_modules",
-      "eslint.config.ts",
-      "eslint.config.js",
-      "vite.config.ts",
-      "vite.config.js",
+      ` + ignoreBlock + `,
     ],
   },
   js.configs.recommended,
@@ -135,7 +217,7 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.es2020,
-      },
+` + globalsExtra + `      },
     },
     plugins: {
       "@typescript-eslint": tsPlugin,
@@ -170,7 +252,7 @@ export default [
       },
     },
   },
-  configPrettier,
+` + tailBlock + `
 ];
 `
 }

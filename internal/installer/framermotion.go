@@ -2,13 +2,13 @@ package installer
 
 import (
 	"github.com/hotslug/go-sparky/internal/logger"
-	"github.com/hotslug/go-sparky/internal/runner"
+	"github.com/hotslug/go-sparky/internal/plan"
 )
 
 // InstallFramerMotion installs Framer Motion dependency.
-func InstallFramerMotion() error {
+func InstallFramerMotion(p plan.Plan) error {
 	spin := logger.StartSpinner("Installing Framer Motion")
-	if err := runner.RunQuiet("pnpm", "install", "framer-motion@latest"); err != nil {
+	if err := addDependencies(p, false, "framer-motion@latest"); err != nil {
 		spin("Failed to install Framer Motion")
 		return err
 	}
@@ -17,9 +17,9 @@ func InstallFramerMotion() error {
 }
 
 // RemoveFramerMotion uninstalls Framer Motion.
-func RemoveFramerMotion() error {
+func RemoveFramerMotion(p plan.Plan) error {
 	spin := logger.StartSpinner("Removing Framer Motion")
-	if err := runner.RunQuiet("pnpm", "remove", "framer-motion"); err != nil {
+	if err := removeDependencies(p, false, "framer-motion"); err != nil {
 		spin("Failed to remove Framer Motion")
 		return err
 	}

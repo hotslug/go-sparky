@@ -1,18 +1,32 @@
 package installer
 
-import "os"
+import (
+	"fmt"
+	"os"
+
+	"github.com/hotslug/go-sparky/internal/plan"
+)
 
 // WriteVercelConfig writes a minimal static build config for Vercel.
-func WriteVercelConfig() error {
-	return os.WriteFile("vercel.json", []byte(vercelConfig), 0o644)
+func WriteVercelConfig(p plan.Plan) error {
+	return os.WriteFile("vercel.json", []byte(VercelConfig(p)), 0o644)
 }
 
 // WriteNetlifyConfig writes a basic Netlify deploy config.
-func WriteNetlifyConfig() error {
-	return os.WriteFile("netlify.toml", []byte(netlifyConfig), 0o644)
+func WriteNetlifyConfig(p plan.Plan) error {
+	return os.WriteFile("netlify.toml", []byte(NetlifyConfig(p)), 0o644)
 }
 
-const vercelConfig = `{
+// VercelConfig returns a static build config for the chosen bundler.
+func VercelConfig(p plan.Plan) string {
+	cmd := fmt.Sprintf("%s dev", p.PackageManager())
+	build := fmt.Sprintf("%s build", p.PackageManager())
+	if p.IsBun() {
+		cmd = "bun run dev"
+		build = "bun run build"
+	}
+
+	return `{
   "builds": [
     {
       "src": "package.json",
@@ -20,14 +34,22 @@ const vercelConfig = `{
       "config": { "distDir": "dist" }
     }
   ],
-  "devCommand": "pnpm dev",
-  "buildCommand": "pnpm build",
+  "devCommand": "` + cmd + `",
+  "buildCommand": "` + build + `",
   "outputDirectory": "dist"
 }
 `
+}
 
-const netlifyConfig = `[build]
-command = "pnpm build"
+// NetlifyConfig returns a Netlify config for the chosen bundler.
+func NetlifyConfig(p plan.Plan) string {
+	build := fmt.Sprintf("%s build", p.PackageManager())
+	if p.IsBun() {
+		build = "bun run build"
+	}
+
+	return `[build]
+command = "` + build + `"
 publish = "dist"
 
 [[redirects]]
@@ -35,3 +57,4 @@ from = "/*"
 to = "/index.html"
 status = 200
 `
+}
