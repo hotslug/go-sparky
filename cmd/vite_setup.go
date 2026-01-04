@@ -29,6 +29,7 @@ func newViteSetupCmd() *cobra.Command {
 		flagVercel       bool
 		flagNetlify      bool
 		flagStorybook    bool
+		flagBackend      bool
 	)
 
 	cmd := &cobra.Command{
@@ -60,10 +61,17 @@ func newViteSetupCmd() *cobra.Command {
 				Vercel:     flagVercel,
 				Netlify:    flagNetlify,
 				Storybook:  flagStorybook,
+				Backend:    flagBackend,
 			}
 
 			if _, err := exec.LookPath("pnpm"); err != nil {
 				return fmt.Errorf("pnpm not found: %w", err)
+			}
+
+			if flagBackend {
+				if _, err := exec.LookPath("bun"); err != nil {
+					return fmt.Errorf("bun not found: %w", err)
+				}
 			}
 
 			if err := version.CheckNodeVersion(); err != nil {
@@ -170,6 +178,13 @@ func newViteSetupCmd() *cobra.Command {
 				return err
 			}
 
+			if p.Backend {
+				if err := installer.WriteBunBackend(); err != nil {
+					spin("Failed to finalize templates")
+					return err
+				}
+			}
+
 			if p.Storybook {
 				if err := installer.WriteStorybookConfig(p, true); err != nil {
 					spin("Failed to finalize templates")
@@ -230,6 +245,7 @@ func newViteSetupCmd() *cobra.Command {
 	cmd.Flags().BoolVar(&flagVercel, "vercel", false, "Add Vercel static build config")
 	cmd.Flags().BoolVar(&flagNetlify, "netlify", false, "Add Netlify deploy config")
 	cmd.Flags().BoolVar(&flagStorybook, "storybook", false, "Add Storybook config and dependencies")
+	cmd.Flags().BoolVar(&flagBackend, "backend", false, "Add a Bun backend in /backend")
 
 	return cmd
 }

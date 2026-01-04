@@ -25,6 +25,7 @@ type Plan struct {
 	Vercel     bool
 	Netlify    bool
 	Storybook  bool
+	Backend    bool
 }
 
 // IsVite returns true when the plan targets Vite.

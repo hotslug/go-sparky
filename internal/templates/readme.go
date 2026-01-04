@@ -74,6 +74,9 @@ func Readme(p plan.Plan) string {
 	if p.Storybook {
 		features = append(features, storybookNote)
 	}
+	if p.Backend {
+		features = append(features, "Bun backend (./backend)")
+	}
 	if p.Docker {
 		features = append(features, "Dockerfile + docker-compose (dev/prod)")
 	}
@@ -132,6 +135,12 @@ func Readme(p plan.Plan) string {
 		b.WriteString("## Docker\n")
 		b.WriteString("- Dev: `docker compose up dev` (http://localhost:" + devPort + ")\n")
 		b.WriteString("- Prod: `docker compose up prod` (http://localhost:4173)\n\n")
+	}
+
+	if p.Backend {
+		b.WriteString("## Backend\n")
+		b.WriteString("- Bun API server in `backend/`\n")
+		b.WriteString("- Start it with `bun --hot backend/index.ts` or `cd backend && bun run dev`\n\n")
 	}
 
 	if p.Vercel || p.Netlify {

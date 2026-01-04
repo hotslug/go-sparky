@@ -28,6 +28,7 @@ func newBunSetupCmd() *cobra.Command {
 		flagVercel       bool
 		flagNetlify      bool
 		flagStorybook    bool
+		flagNoBackend    bool
 	)
 
 	cmd := &cobra.Command{
@@ -59,6 +60,7 @@ func newBunSetupCmd() *cobra.Command {
 				Vercel:     flagVercel,
 				Netlify:    flagNetlify,
 				Storybook:  flagStorybook,
+				Backend:    !flagNoBackend,
 			}
 
 			if _, err := exec.LookPath("bun"); err != nil {
@@ -220,6 +222,7 @@ func newBunSetupCmd() *cobra.Command {
 	cmd.Flags().BoolVar(&flagVercel, "vercel", false, "Add Vercel static build config")
 	cmd.Flags().BoolVar(&flagNetlify, "netlify", false, "Add Netlify deploy config")
 	cmd.Flags().BoolVar(&flagStorybook, "storybook", false, "Add Storybook config and dependencies")
+	cmd.Flags().BoolVar(&flagNoBackend, "no-backend", false, "Skip Bun API routes (keep static server)")
 
 	return cmd
 }

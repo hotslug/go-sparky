@@ -16,7 +16,17 @@ func StartSpinner(msg string) func(finalMsg string) {
 
 	go func() {
 		// Chunkier block spinner is easier to see than the thin braille dots.
-		frames := []string{"⣿", "⣷", "⣯", "⣟", "⡿", "⢿", "⣻", "⣽"}
+		frames := []string{"⠋",
+			"⠙",
+			"⠹",
+			"⠸",
+			"⠼",
+			"⠴",
+			"⠦",
+			"⠧",
+			"⠇",
+			"⠏",
+		}
 		color := "\033[38;5;45m" // bright cyan
 		i := 0
 		for {
